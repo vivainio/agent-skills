@@ -15,7 +15,7 @@ def main():
             continue
 
         target = TARGET_DIR / skill.name
-        if target.exists():
+        if target.is_symlink() or target.exists():
             if target.is_symlink():
                 target.unlink()
             else:
