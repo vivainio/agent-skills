@@ -92,3 +92,45 @@ uv add requests      # Add dependency
 uv run pytest        # Run tests
 uv build             # Build package
 ```
+
+## GitHub Actions: Publish to PyPI
+
+### Setup Steps
+
+1. Copy [publish.yml](publish.yml) to `.github/workflows/publish.yml`
+
+2. Configure PyPI Trusted Publisher (no API tokens needed):
+   - Go to https://pypi.org/manage/account/publishing/
+   - Add new pending publisher:
+     - PyPI project name: `myproject`
+     - Owner: your GitHub username
+     - Repository: your repo name
+     - Workflow name: `publish.yml`
+     - Environment: `pypi`
+
+3. Create GitHub environment:
+   - Go to repo Settings → Environments
+   - Create environment named `pypi`
+
+4. Release workflow:
+   - Create a GitHub release with tag like `v0.1.0`
+   - Action automatically extracts version from tag and publishes
+
+### How Version is Set
+
+The workflow extracts version from the git tag:
+- Tag `v0.1.0` → version `0.1.0` in pyproject.toml
+- The `v` prefix is stripped automatically
+- No need to manually update version in pyproject.toml
+
+### Publishing a Release
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Then create a release on GitHub from the tag, or use:
+```bash
+gh release create v0.1.0 --generate-notes
+```
