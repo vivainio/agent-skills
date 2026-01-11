@@ -18,6 +18,8 @@ zaira refresh sprint-review.md         # Refresh existing report
 zaira boards                           # List boards
 zaira my                               # Show my open tickets
 zaira comment FOO-1234 "Comment text"  # Add comment to ticket
+zaira edit FOO-1234 -t "New title"    # Edit ticket title
+zaira edit FOO-1234 -d "Description"  # Edit description (supports Jira wiki syntax)
 zaira link FOO-1234 FOO-5678 -t Blocks # Link tickets
 ```
 
