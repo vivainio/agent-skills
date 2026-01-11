@@ -9,7 +9,7 @@ A zero-dependency Python task runner using `do_` prefixed functions.
 
 ## Creating a New tasks.py
 
-Copy [template.py](template.py) to the project root as `tasks.py`.
+Copy [tasks.py](tasks.py) to the project root.
 
 ## Adding Tasks
 
