@@ -17,6 +17,7 @@ zaira report my-tickets --full         # Named report + export tickets
 zaira sync sprint-review.md            # Re-sync existing report
 zaira boards                           # List boards
 zaira my                               # Show my open tickets
+zaira comment FOO-1234 "Comment text"  # Add comment to ticket
 ```
 
 ## Programmatic Access
