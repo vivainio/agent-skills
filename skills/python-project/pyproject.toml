@@ -1,0 +1,12 @@
+[project]
+name = "myproject"
+version = "0.1.0"
+description = "Project description"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+myproject = "myproject.cli:main"
+
+[tool.uv]
+package = true
