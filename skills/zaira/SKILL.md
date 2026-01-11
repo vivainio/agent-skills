@@ -1,6 +1,6 @@
 ---
 name: zaira
-description: Access Jira tickets offline using zaira CLI. Use when user needs to export, report, or sync Jira tickets, or mentions "jira", "zaira", or ticket keys like "FOO-123".
+description: Access Jira tickets offline using zaira CLI. Use when user needs to export, report, or refresh Jira tickets, or mentions "jira", "zaira", or ticket keys like "FOO-123".
 ---
 
 # Zaira - Jira CLI
@@ -14,10 +14,11 @@ zaira export FOO-1234 FOO-5678         # Export specific tickets
 zaira export --jql "project = FOO"     # Export by JQL query
 zaira report --board 123 --group-by status  # Generate report
 zaira report my-tickets --full         # Named report + export tickets
-zaira sync sprint-review.md            # Re-sync existing report
+zaira refresh sprint-review.md         # Refresh existing report
 zaira boards                           # List boards
 zaira my                               # Show my open tickets
 zaira comment FOO-1234 "Comment text"  # Add comment to ticket
+zaira link FOO-1234 FOO-5678 -t Blocks # Link tickets
 ```
 
 ## Programmatic Access
