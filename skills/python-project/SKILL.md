@@ -84,6 +84,30 @@ def add(a: int, b: int) -> int:
 
 Use Python 3.11+ built-in generics: `list[str]`, `dict[str, int]`, not `List`, `Dict`.
 
+### Structured Data
+
+Use `TypedDict` for dictionary shapes (e.g., JSON, API responses):
+```python
+from typing import TypedDict
+
+class Ticket(TypedDict):
+    key: str
+    summary: str
+    status: str
+    assignee: str | None
+```
+
+Use `dataclass` for objects with behavior or defaults:
+```python
+from dataclasses import dataclass
+
+@dataclass
+class Config:
+    site: str
+    email: str
+    timeout: int = 30
+```
+
 ## Common Commands
 
 ```bash
@@ -116,21 +140,20 @@ uv build             # Build package
    - Create a GitHub release with tag like `v0.1.0`
    - Action automatically extracts version from tag and publishes
 
-### How Version is Set
-
-The workflow extracts version from the git tag:
-- Tag `v0.1.0` → version `0.1.0` in pyproject.toml
-- The `v` prefix is stripped automatically
-- No need to manually update version in pyproject.toml
-
 ### Publishing a Release
 
+Create a GitHub release using `gh release create`:
+
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+gh release create v0.1.0 --title "v0.1.0" --notes "Release notes here"
 ```
 
-Then create a release on GitHub from the tag, or use:
+Or use `--generate-notes` to auto-generate from commits:
+
 ```bash
 gh release create v0.1.0 --generate-notes
 ```
+
+GitHub Actions will automatically update the version in `pyproject.toml` and publish to PyPI.
+
+Do NOT manually edit the version in `pyproject.toml` - it is managed by GitHub Actions.
