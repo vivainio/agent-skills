@@ -115,3 +115,29 @@ gh release create v0.1.0 --generate-notes
 ```
 
 The workflow automatically extracts version from tag (strips `v` prefix) and publishes.
+
+## gh CLI with Multiple Accounts
+
+If `gh` commands fail with permission errors (e.g., "workflow scope may be required"), you may have the wrong account active.
+
+### Check Active Account
+
+```bash
+gh auth status
+```
+
+Look for `Active account: true` to see which account is currently active.
+
+### Switch Account
+
+```bash
+gh auth switch --user vivainio   # Switch to public account
+gh auth switch --user work_user  # Switch to work account
+```
+
+### Verify and Retry
+
+```bash
+gh auth status                    # Confirm correct account is active
+gh release create v0.1.0 ...     # Retry the command
+```
