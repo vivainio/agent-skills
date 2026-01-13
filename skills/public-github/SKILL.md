@@ -108,13 +108,25 @@ jobs:
 
 ### 4. Create Release
 
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-gh release create v0.1.0 --generate-notes
+**IMPORTANT: Do NOT manually edit `version` in pyproject.toml.** The workflow sets it from the release tag automatically. Use a placeholder version in pyproject.toml:
+
+```toml
+version = "0.0.0.dev"  # Set by CI from release - do not edit manually
 ```
 
-The workflow automatically extracts version from tag (strips `v` prefix) and publishes.
+```bash
+gh release create v0.1.0 --notes "$(cat <<'EOF'
+## What's Changed
+- Feature X: description from user perspective
+- Breaking: Y now requires Z
+- Fix: description of bug fix
+EOF
+)"
+```
+
+Generate release notes using AI to summarize changes from a user perspective, highlighting breaking changes. Avoid `--generate-notes` which just lists commits mechanically.
+
+The workflow automatically extracts version from release tag (strips `v` prefix) and publishes.
 
 ## gh CLI with Multiple Accounts
 
