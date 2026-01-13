@@ -24,7 +24,8 @@ zaira report --jql "project = FOO" --files  # Force file output
 zaira refresh sprint-review.md              # Refresh existing report
 
 # View tickets
-zaira my                                    # Show my open tickets
+zaira my                                    # Show my assigned tickets
+zaira my -r                                 # Show tickets I reported (created)
 zaira boards                                # List boards
 
 # Create ticket from YAML front matter
