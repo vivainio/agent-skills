@@ -9,7 +9,11 @@ A zero-dependency Python task runner using `do_` prefixed functions.
 
 ## Creating a New tasks.py
 
-Copy [tasks.py](tasks.py) to the project root.
+**Minimal** (zero dependencies, self-contained): Copy [tasks.py](tasks.py) to the project root.
+
+**Maximal** (argparse integration, task modules, task-by-index): Use [scaffer-templates tasks.py](https://github.com/vivainio/scaffer-templates/blob/master/templates/tasks/tasks.py)
+
+Use minimal for standard tasks (check, format, test). Use maximal for project-specific tasks or if you need argparse arguments.
 
 ## Adding Tasks
 
