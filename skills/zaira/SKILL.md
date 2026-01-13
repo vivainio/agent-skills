@@ -42,6 +42,7 @@ zaira edit FOO-1234 --from -                # Update from stdin YAML
 zaira comment FOO-1234 "Comment text"       # Add comment to ticket
 zaira link FOO-1234 FOO-5678 --type Blocks  # Link tickets
 zaira transition FOO-1234 "In Progress"     # Change ticket status
+zaira transition FOO-1234 --list            # List available transitions
 
 # Instance metadata (cached locally)
 zaira info statuses                         # List statuses
