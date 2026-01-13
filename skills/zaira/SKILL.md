@@ -16,11 +16,12 @@ zaira export --jql "project = FOO"          # Export by JQL query
 zaira export FOO-1234 --all-fields          # Include custom fields
 zaira export FOO-1234 --files               # Force file output without zproject.toml
 
-# Reports
+# Reports (group-by: status, priority, issuetype, assignee, labels, components, parent)
 zaira report --board 123 --group-by status  # Generate report from board
 zaira report my-tickets --full              # Named report + export tickets
 zaira report --dashboard 123                # Report from Jira dashboard
 zaira report --jql "project = FOO" --files  # Force file output
+zaira report --jql "..." -g components      # Group by component
 zaira refresh sprint-review.md              # Refresh existing report
 
 # View tickets
@@ -78,6 +79,11 @@ issue = jira.issue("FOO-123")
 - `reports/` - Generated reports
 - `~/.cache/zaira/` - Cached schema (fields, statuses, etc.)
 
-## Advanced Usage
+## Project Setup
 
-In a directory with `zproject.toml`, you can use named queries, report aliases, and batch operations. See `zaira init --project FOO` to generate one.
+```bash
+zaira init -p FOO                           # Generate zproject.toml for project
+zaira init -p FOO --force                   # Overwrite existing config
+```
+
+In a directory with `zproject.toml`, you can use named queries, report aliases, and batch operations.
