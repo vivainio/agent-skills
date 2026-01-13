@@ -50,6 +50,8 @@ zaira transition FOO-1234 --list            # List available transitions
 zaira info statuses                         # List statuses
 zaira info fields                           # List custom fields
 zaira info fields --refresh                 # Refresh from Jira API
+zaira info components FOO                   # List components for project
+zaira info labels FOO                       # List labels for project
 zaira info --save                           # Refresh all metadata
 ```
 
@@ -69,8 +71,21 @@ zaira wiki get 123456 --format json         # Output full JSON response
 
 ```python
 import zaira
+
+# Jira client
 jira = zaira.client()
 issue = jira.issue("FOO-123")
+
+# Instance schema (fields, statuses, priorities, issue types, link types)
+s = zaira.schema()
+s["statuses"]    # {'Open': 'To Do', 'In Progress': 'In Progress', ...}
+s["fields"]      # {'customfield_10001': 'Epic Link', ...}
+s["priorities"]  # ['Blocker', 'Critical', 'Major', ...]
+
+# Project schema (components, labels)
+ps = zaira.project_schema("FOO")
+ps["components"]  # ['Backend', 'Frontend', ...]
+ps["labels"]      # ['bug', 'feature', ...]
 ```
 
 ## Output
@@ -82,8 +97,9 @@ issue = jira.issue("FOO-123")
 ## Project Setup
 
 ```bash
-zaira init -p FOO                           # Generate zproject.toml for project
-zaira init -p FOO --force                   # Overwrite existing config
+zaira init FOO                              # Generate zproject.toml for project
+zaira init FOO BAR                          # Multiple projects
+zaira init FOO --force                      # Overwrite existing config
 ```
 
 In a directory with `zproject.toml`, you can use named queries, report aliases, and batch operations.
