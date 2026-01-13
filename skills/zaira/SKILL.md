@@ -10,18 +10,44 @@ Exports Jira tickets to local markdown for offline access. See https://github.co
 ## Commands
 
 ```bash
-zaira export FOO-1234 FOO-5678         # Export specific tickets
-zaira export --jql "project = FOO"     # Export by JQL query
-zaira report --board 123 --group-by status  # Generate report
-zaira report my-tickets --full         # Named report + export tickets
-zaira refresh sprint-review.md         # Refresh existing report
-zaira boards                           # List boards
-zaira my                               # Show my open tickets
-zaira comment FOO-1234 "Comment text"  # Add comment to ticket
-zaira edit FOO-1234 -t "New title"    # Edit ticket title
-zaira edit FOO-1234 -d "Description"  # Edit description (supports Jira wiki syntax)
-zaira link FOO-1234 FOO-5678 -t Blocks # Link tickets
-zaira transition FOO-1234 "In Progress" # Change ticket status
+# Export tickets
+zaira export FOO-1234 FOO-5678              # Export specific tickets
+zaira export --jql "project = FOO"          # Export by JQL query
+zaira export FOO-1234 --all-fields          # Include custom fields
+zaira export FOO-1234 --files               # Force file output without zproject.toml
+
+# Reports
+zaira report --board 123 --group-by status  # Generate report from board
+zaira report my-tickets --full              # Named report + export tickets
+zaira report --dashboard 123                # Report from Jira dashboard
+zaira report --jql "project = FOO" --files  # Force file output
+zaira refresh sprint-review.md              # Refresh existing report
+
+# View tickets
+zaira my                                    # Show my open tickets
+zaira boards                                # List boards
+
+# Create ticket from YAML front matter
+zaira create ticket.md                      # Create from file
+zaira create - --dry-run                    # Preview from stdin
+
+# Edit ticket fields
+zaira edit FOO-1234 --title "New title"
+zaira edit FOO-1234 --description "New description"
+zaira edit FOO-1234 --field "Priority=High" --field "Epic Link=FOO-100"
+zaira edit FOO-1234 --from fields.yaml      # Update from YAML file
+zaira edit FOO-1234 --from -                # Update from stdin YAML
+
+# Other actions
+zaira comment FOO-1234 "Comment text"       # Add comment to ticket
+zaira link FOO-1234 FOO-5678 --type Blocks  # Link tickets
+zaira transition FOO-1234 "In Progress"     # Change ticket status
+
+# Instance metadata (cached locally)
+zaira info statuses                         # List statuses
+zaira info fields                           # List custom fields
+zaira info fields --refresh                 # Refresh from Jira API
+zaira info --save                           # Refresh all metadata
 ```
 
 ## Confluence Wiki
@@ -29,11 +55,11 @@ zaira transition FOO-1234 "In Progress" # Change ticket status
 Access Confluence pages using the same Jira credentials:
 
 ```bash
-zaira wiki get 123456                  # Get page by ID
-zaira wiki get "https://acme.atlassian.net/wiki/spaces/DEV/pages/123456/Title"  # Get by URL
-zaira wiki get 123456 --format md      # Output as markdown (default)
-zaira wiki get 123456 --format html    # Output raw HTML
-zaira wiki get 123456 --format json    # Output full JSON response
+zaira wiki get 123456                       # Get page by ID
+zaira wiki get "https://acme.atlassian.net/wiki/spaces/DEV/pages/123456/Title"
+zaira wiki get 123456 --format md           # Output as markdown (default)
+zaira wiki get 123456 --format html         # Output raw HTML
+zaira wiki get 123456 --format json         # Output full JSON response
 ```
 
 ## Programmatic Access
@@ -48,6 +74,7 @@ issue = jira.issue("FOO-123")
 
 - `tickets/` - Exported ticket markdown files
 - `reports/` - Generated reports
+- `~/.cache/zaira/` - Cached schema (fields, statuses, etc.)
 
 ## Advanced Usage
 
