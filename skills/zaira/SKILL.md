@@ -60,11 +60,21 @@ zaira info --save                           # Refresh all metadata
 Access Confluence pages using the same Jira credentials:
 
 ```bash
+# Get page by ID or URL
 zaira wiki get 123456                       # Get page by ID
 zaira wiki get "https://acme.atlassian.net/wiki/spaces/DEV/pages/123456/Title"
 zaira wiki get 123456 --format md           # Output as markdown (default)
 zaira wiki get 123456 --format html         # Output raw HTML
 zaira wiki get 123456 --format json         # Output full JSON response
+
+# Search pages
+zaira wiki search "search terms"            # Search in title and body
+zaira wiki search "API docs" --space TEAM   # Search in specific space
+zaira wiki search --creator "John Doe"      # Find pages by creator
+zaira wiki search "onboarding" --limit 10   # Limit results
+zaira wiki search "design" --format url     # Output just URLs
+zaira wiki search "arch" --format id        # Output just page IDs
+zaira wiki search "test" --format json      # Full JSON response
 ```
 
 ## Programmatic Access
