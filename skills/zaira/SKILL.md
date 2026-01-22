@@ -55,6 +55,26 @@ zaira info labels FOO                       # List labels for project
 zaira info --save                           # Refresh all metadata
 ```
 
+## Jira Formatting
+
+When editing ticket descriptions or comments, use Jira wiki markup (not markdown):
+
+```
+h1. Heading 1
+h2. Heading 2
+h3. Heading 3
+
+* Bullet item
+* Another item
+
+# Numbered item
+# Another numbered item
+
+*bold*  _italic_  -strikethrough-
+[link text|https://example.com]
+{code}code block{code}
+```
+
 ## Confluence Wiki
 
 Access Confluence pages using the same Jira credentials:
