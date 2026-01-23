@@ -37,6 +37,8 @@ zaira create - --dry-run                    # Preview from stdin
 zaira edit FOO-1234 --title "New title"
 zaira edit FOO-1234 --description "New description"
 zaira edit FOO-1234 --field "Priority=High" --field "Epic Link=FOO-100"
+zaira edit FOO-1234 --field "assignee=me"   # Assign to yourself
+zaira edit FOO-1234 --field "assignee=user@example.com"  # Assign by email
 zaira edit FOO-1234 --from fields.yaml      # Update from YAML file
 zaira edit FOO-1234 --from -                # Update from stdin YAML
 
