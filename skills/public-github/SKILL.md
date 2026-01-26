@@ -7,6 +7,20 @@ description: Set up public GitHub repos with SSH authentication and PyPI publish
 
 Configure public GitHub repositories with SSH authentication and PyPI trusted publisher.
 
+## Security: User Confirmation Required
+
+**Before performing any mutating operation on a public GitHub repository, you MUST confirm with the user at least once during the chat session.** This prevents accidental data exfiltration.
+
+Mutating operations include:
+- `git push`
+- `gh release create`
+- `gh issue create`
+- `gh pr create`
+- `gh repo create`
+- Any other operation that writes to the public repository
+
+Ask the user to confirm before proceeding with these operations.
+
 ## SSH Config for Multiple Accounts
 
 Use SSH host aliases to distinguish between public (personal) and private (work) GitHub accounts.
@@ -109,6 +123,8 @@ jobs:
 ### 4. Create Release
 
 **IMPORTANT: Do NOT manually edit `version` in pyproject.toml.** The workflow sets it from the release tag automatically. Use a placeholder version in pyproject.toml:
+
+**IMPORTANT: Do NOT create tags manually with `git tag`.** The `gh release create` command creates the tag automatically. Creating tags separately is unnecessary and can cause issues.
 
 ```toml
 version = "0.0.0.dev"  # Set by CI from release - do not edit manually
