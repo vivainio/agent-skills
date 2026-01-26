@@ -108,6 +108,11 @@ echo "<p>From stdin</p>" | zaira wiki create -s SPACE -t "Title" -b -
 zaira wiki put 123456 -b "<p>New content</p>"           # Update by page ID
 zaira wiki put 123456 -b "<p>Content</p>" -t "New title"  # Also change title
 cat content.html | zaira wiki put 123456 -b -           # Update from stdin
+
+# Upload attachments
+zaira wiki attach 123456 image.png                      # Single file
+zaira wiki attach 123456 *.png                          # Glob pattern
+# Reference in page: <ac:image><ri:attachment ri:filename="image.png"/></ac:image>
 ```
 
 ## Programmatic Access
