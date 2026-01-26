@@ -97,6 +97,17 @@ zaira wiki search "onboarding" --limit 10   # Limit results
 zaira wiki search "design" --format url     # Output just URLs
 zaira wiki search "arch" --format id        # Output just page IDs
 zaira wiki search "test" --format json      # Full JSON response
+
+# Create page (body in Confluence storage format)
+zaira wiki create -s SPACE -t "Title" -b "<p>Content</p>"
+zaira wiki create -s ~username -t "Personal page" -b "<p>My page</p>"
+zaira wiki create -s TEAM -t "Child" -b "<p>Content</p>" -p 123456  # Under parent page
+echo "<p>From stdin</p>" | zaira wiki create -s SPACE -t "Title" -b -
+
+# Update page
+zaira wiki put 123456 -b "<p>New content</p>"           # Update by page ID
+zaira wiki put 123456 -b "<p>Content</p>" -t "New title"  # Also change title
+cat content.html | zaira wiki put 123456 -b -           # Update from stdin
 ```
 
 ## Programmatic Access
