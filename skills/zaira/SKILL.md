@@ -112,6 +112,7 @@ cat content.html | zaira wiki put 123456 -b -           # Update from stdin
 # Upload attachments
 zaira wiki attach 123456 image.png                      # Single file
 zaira wiki attach 123456 *.png                          # Glob pattern
+zaira wiki attach 123456 image.png --replace            # Update existing
 # Reference in page: <ac:image><ri:attachment ri:filename="image.png"/></ac:image>
 ```
 
