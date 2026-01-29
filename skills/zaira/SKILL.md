@@ -108,14 +108,20 @@ ps["labels"]      # ['bug', 'feature', ...]
 - `reports/` - Generated reports
 - `~/.cache/zaira/` - Cached schema (fields, statuses, etc.)
 
-## Project Setup (Advanced)
-
-**Note:** `zproject.toml` is an advanced feature for project management workflows (defining query aliases, board shortcuts, batch operations). Most AI users don't need this - the commands above work without any project configuration.
+## Setup
 
 ```bash
-zaira init FOO                              # Generate zproject.toml for project
-zaira init FOO BAR                          # Multiple projects
-zaira init FOO --force                      # Overwrite existing config
+zaira init                                  # Setup/verify credentials
+```
+
+## Project Setup (for project managers)
+
+**Note:** `zproject.toml` is for project managers and power users who need repeatable reports, query aliases, and batch operations. Most users don't need this - the commands above work without any project configuration.
+
+```bash
+zaira init-project FOO                      # Generate zproject.toml for project
+zaira init-project FOO BAR                  # Multiple projects
+zaira init-project FOO --force              # Overwrite existing config
 ```
 
 In a directory with `zproject.toml`, you can use named queries, report aliases, and batch operations.
