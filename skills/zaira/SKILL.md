@@ -48,6 +48,13 @@ zaira log FOO-1234 30m -c "Code review"     # Log with comment
 zaira log FOO-1234 "1h 30m" -d 2026-02-05  # Log to specific date
 zaira log FOO-1234 --list                   # List worklogs with total
 
+# Query hours across tickets
+zaira hours                                 # Last 7 days (personal)
+zaira hours --days 14                       # Last 14 days
+zaira hours --from 2026-01-20 --to 2026-01-24  # Custom range
+zaira hours --summary                       # Ticket totals only
+zaira hours FOO-123 FOO-456                 # Hours by person on tickets
+
 # Other actions
 zaira comment FOO-1234 "Comment text"       # Add comment to ticket
 zaira link FOO-1234 FOO-5678 --type Blocks  # Link tickets
