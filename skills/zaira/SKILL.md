@@ -42,6 +42,12 @@ zaira edit FOO-1234 --field "assignee=user@example.com"  # Assign by email
 zaira edit FOO-1234 --from fields.yaml      # Update from YAML file
 zaira edit FOO-1234 --from -                # Update from stdin YAML
 
+# Log work hours
+zaira log FOO-1234 2h                       # Log 2 hours
+zaira log FOO-1234 30m -c "Code review"     # Log with comment
+zaira log FOO-1234 "1h 30m" -d 2026-02-05  # Log to specific date
+zaira log FOO-1234 --list                   # List worklogs with total
+
 # Other actions
 zaira comment FOO-1234 "Comment text"       # Add comment to ticket
 zaira link FOO-1234 FOO-5678 --type Blocks  # Link tickets
