@@ -24,7 +24,7 @@ zaira report --jql "project = FOO" --files  # Force file output
 zaira report --jql "..." -g components      # Group by component
 zaira refresh sprint-review.md              # Refresh existing report
 
-# View tickets
+# View tickets (use "export" to read a specific ticket - there is no "show" command)
 zaira my                                    # Show my assigned tickets
 zaira my -r                                 # Show tickets I reported (created)
 zaira boards                                # List boards

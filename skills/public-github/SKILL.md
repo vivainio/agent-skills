@@ -11,6 +11,15 @@ Configure public GitHub repositories with SSH authentication and PyPI trusted pu
 
 **Before performing any mutating operation on a public GitHub repository, you MUST confirm with the user at least once during the chat session.** This prevents accidental data exfiltration.
 
+### No Internal References
+
+Public GitHub projects must not contain references to internal products, projects, or proprietary systems. Before pushing, verify the code does not include:
+- Internal project names, codenames, or acronyms
+- References to internal tools, services, or infrastructure
+- Internal URLs, hostnames, or endpoints
+- Proprietary business logic or trade secrets
+- Internal documentation links or Confluence/wiki references
+
 Mutating operations include:
 - `git push`
 - `gh release create`
