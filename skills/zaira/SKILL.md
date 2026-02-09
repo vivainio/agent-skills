@@ -10,11 +10,24 @@ Exports Jira tickets to local markdown for offline access. See https://github.co
 ## Commands
 
 ```bash
-# Export tickets
-zaira export FOO-1234 FOO-5678              # Export specific tickets
-zaira export --jql "project = FOO"          # Export by JQL query
-zaira export FOO-1234 --all-fields          # Include custom fields
-zaira export FOO-1234 --files               # Force file output without zproject.toml
+# Search tickets
+zaira search "login bug"                    # Text search
+zaira search "login bug" -p FOO             # Text search in project
+zaira search -p FOO -s "In Progress"        # Filter by project and status
+zaira search -a "john.doe" -p FOO           # Filter by assignee
+zaira search --jql "project = FOO AND created >= -7d"  # Raw JQL
+zaira search "keyword" -n 20                # Limit results
+
+# Get tickets (stdout by default, -o to save files)
+zaira get FOO-1234                          # View ticket to stdout
+zaira get FOO-1234 FOO-5678                 # View multiple tickets
+zaira get FOO-1234 --format json            # JSON output
+zaira get FOO-1234 --all-fields             # Include custom fields
+zaira get FOO-1234 -o tickets/              # Save to files
+zaira get --jql "project = FOO" -o tickets/ # Batch export by JQL
+zaira get --board 123 -o tickets/           # Export from board
+zaira get --sprint 456 -o tickets/          # Export from sprint
+zaira get FOO-1234 --with-prs              # Include linked GitHub PRs
 
 # Reports (group-by: status, priority, issuetype, assignee, labels, components, parent)
 zaira report --board 123 --group-by status  # Generate report from board
@@ -24,7 +37,7 @@ zaira report --jql "project = FOO" --files  # Force file output
 zaira report --jql "..." -g components      # Group by component
 zaira refresh sprint-review.md              # Refresh existing report
 
-# View tickets (use "export" to read a specific ticket - there is no "show" command)
+# View my tickets
 zaira my                                    # Show my assigned tickets
 zaira my -r                                 # Show tickets I reported (created)
 zaira boards                                # List boards
@@ -60,6 +73,7 @@ zaira comment FOO-1234 "Comment text"       # Add comment to ticket
 zaira link FOO-1234 FOO-5678 --type Blocks  # Link tickets
 zaira transition FOO-1234 "In Progress"     # Change ticket status
 zaira transition FOO-1234 --list            # List available transitions
+zaira transition FOO-1234 Done -F "Resolution=Done"  # Set fields during transition
 
 # Instance metadata (cached locally)
 zaira info statuses                         # List statuses
