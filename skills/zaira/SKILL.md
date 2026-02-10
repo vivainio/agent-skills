@@ -28,6 +28,7 @@ zaira get --jql "project = FOO" -o tickets/ # Batch export by JQL
 zaira get --board 123 -o tickets/           # Export from board
 zaira get --sprint 456 -o tickets/          # Export from sprint
 zaira get FOO-1234 --with-prs              # Include linked GitHub PRs
+zaira get FOO-1234 --with-tests            # Include linked Xray tests and executions
 
 # Reports (group-by: status, priority, issuetype, assignee, labels, components, parent)
 zaira report --board 123 --group-by status  # Generate report from board
