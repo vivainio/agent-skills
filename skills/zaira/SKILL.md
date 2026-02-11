@@ -69,6 +69,14 @@ zaira hours --from 2026-01-20 --to 2026-01-24  # Custom range
 zaira hours --summary                       # Ticket totals only
 zaira hours FOO-123 FOO-456                 # Hours by person on tickets
 
+# Download attachments by pattern
+zaira get-attachment FOO-1234 "*.pdf"        # Download PDFs to current dir
+zaira get-attachment FOO-1234 "report*" -o tmp/  # Download to specific dir
+zaira get-attachment FOO-1234 "*"            # Download all attachments
+
+# Upload attachments
+zaira attach FOO-1234 file1.pdf file2.png    # Upload files to ticket
+
 # Other actions
 zaira comment FOO-1234 "Comment text"       # Add comment to ticket
 zaira link FOO-1234 FOO-5678 --type Blocks  # Link tickets
