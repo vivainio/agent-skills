@@ -131,29 +131,15 @@ jobs:
 
 ### 4. Create Release
 
-**IMPORTANT: Do NOT manually edit `version` in pyproject.toml.** The workflow sets it from the release tag automatically. Use a placeholder version in pyproject.toml:
+Keep `version = "0.0.0.dev"` in pyproject.toml — the workflow sets it from the release tag automatically.
 
-**IMPORTANT: Do NOT create tags manually with `git tag`.** The `gh release create` command creates the tag automatically. Creating tags separately is unnecessary and can cause issues.
+Release checklist:
 
-**IMPORTANT: Before choosing a version number for a new release, always check `gh release list` (not `git tag`).** Local tags may be out of date if releases were created on GitHub directly. This ensures you don't accidentally create a version older than the latest release.
-
-```toml
-version = "0.0.0.dev"  # Set by CI from release - do not edit manually
-```
-
-```bash
-gh release create v0.1.0 --notes "$(cat <<'EOF'
-## What's Changed
-- Feature X: description from user perspective
-- Breaking: Y now requires Z
-- Fix: description of bug fix
-EOF
-)"
-```
+1. Check latest release version: `gh release list` (not `git tag` — local tags may be stale)
+2. Push commits: `git push` (the tag is created on remote HEAD, not local)
+3. Create release: `gh release create v0.1.0 --notes "..."` (this creates the tag — never use `git tag` manually)
 
 Generate release notes using AI to summarize changes from a user perspective, highlighting breaking changes. Avoid `--generate-notes` which just lists commits mechanically.
-
-The workflow automatically extracts version from release tag (strips `v` prefix) and publishes.
 
 ## gh CLI with Multiple Accounts
 
