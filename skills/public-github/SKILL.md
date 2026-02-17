@@ -135,6 +135,8 @@ jobs:
 
 **IMPORTANT: Do NOT create tags manually with `git tag`.** The `gh release create` command creates the tag automatically. Creating tags separately is unnecessary and can cause issues.
 
+**IMPORTANT: Before choosing a version number for a new release, always check `gh release list` (not `git tag`).** Local tags may be out of date if releases were created on GitHub directly. This ensures you don't accidentally create a version older than the latest release.
+
 ```toml
 version = "0.0.0.dev"  # Set by CI from release - do not edit manually
 ```
