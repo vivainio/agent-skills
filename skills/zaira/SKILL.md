@@ -83,14 +83,14 @@ zaira link FOO-1234 FOO-5678 --type Blocks  # Link tickets
 zaira transition FOO-1234 "In Progress"     # Change ticket status
 zaira transition FOO-1234 --list            # List available transitions
 zaira transition FOO-1234 Done -F "Resolution=Done"  # Set fields during transition
+zaira transition FOO-1234 Done -c "Comment text"  # Include comment with transition
+zaira transition FOO-1234 Done -F "Resolution=Done" -c "Comment"  # Fields + comment
 
 # Instance metadata (cached locally)
 zaira info statuses                         # List statuses
 zaira info fields                           # List custom fields
 zaira info fields --refresh                 # Refresh from Jira API
-zaira info components FOO                   # List components for project
-zaira info labels FOO                       # List labels for project
-zaira info --save                           # Refresh all metadata
+zaira info field Priority "Story Points"    # Look up editmeta for fields
 ```
 
 ## Jira Formatting
