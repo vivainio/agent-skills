@@ -44,7 +44,7 @@ Then commit `plan.md` so the state is captured in git.
 
 ## specs/ directory
 
-The `specs/` directory at the project root may be a symlink to a location in another repository (e.g. a shared docs or planning repo). This is fine — follow the symlink and commit spec changes in the target repository, not the project repo.
+The `specs/` directory at the project root is probably a symlink to a location in another repository (e.g. a shared docs or planning repo), and should be listed in `.gitignore`. Follow the symlink and commit spec changes in the target repository, not the project repo.
 
 ## Spec File Conventions
 
