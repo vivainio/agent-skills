@@ -11,7 +11,7 @@ description: "Spec-driven design workflow keeping plans and requirements in a `s
 
 1. Check if a spec already exists: `ls specs/` and scan for relevant area/feature directories
 2. If no spec exists, identify the area and create `specs/<area>/<feature>/spec.md` using the template in `references/spec-template.md`
-3. If no clear area exists yet, use `specs/main/<feature>/` as the default — refactor into named areas later as the project grows
+3. If no clear area exists yet, use `main` as the area (see Spec File Conventions)
 4. Fill in **What** and **Why** at minimum — keep it to one screen
 5. Show the spec to the user and get a nod before writing code
 
@@ -22,15 +22,7 @@ description: "Spec-driven design workflow keeping plans and requirements in a `s
 
 ### Handover
 
-When the user requests a handover (taking a break, switching context, handing off to someone else), write `plan.md` with the current status:
-
-- Copy the current native plan (or remaining steps from it)
-- Mark completed steps (e.g. with `[x]` or ~~strikethrough~~)
-- Annotate the current stopping point clearly
-- Note any loose context, gotchas, or decisions made during the session that aren't yet in `spec.md`
-- List what to do next
-
-Then commit `plan.md` so the state is captured in git.
+When the user requests a handover, write `plan.md` capturing current status: what's done, where things stopped, any loose context or decisions not yet in `spec.md`, and what to do next. Then commit it.
 
 ### After shipping
 
@@ -54,9 +46,8 @@ Specs always use a 2-level hierarchy: `specs/<area>/<feature>/`
 - **area** — a coherent part of the application (e.g. `auth`, `billing`, `api`, `cli`, `infra`); use `main` if no subareas have been established yet
 - **feature** — a specific capability within that area
 - `spec.md` — requirements, context, decisions (long-lived)
-- `plan.md` — created on handover to capture current status (temporary; delete after folding into spec)
 - Naming: kebab-case at both levels
-- Additional files (diagrams, mockups, research notes) can live alongside `spec.md`
+- Optional companion files can live alongside `spec.md`: `research.md` (background, prior art, analysis), `testing.md` (test strategy, edge cases), diagrams, mockups, etc.
 
 ## Resources
 
