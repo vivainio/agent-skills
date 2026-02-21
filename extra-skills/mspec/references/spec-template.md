@@ -14,6 +14,9 @@ Motivation or context. What problem does this solve?
 ## Decisions
 Key design decisions made (e.g. approach chosen, alternatives rejected).
 
+## Tickets
+Relevant work tickets (e.g. PROJ-123). Remove section if not applicable.
+
 ## Open questions
 Anything unresolved. Remove section if empty.
 ```
