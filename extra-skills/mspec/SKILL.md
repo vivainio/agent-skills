@@ -1,6 +1,6 @@
 ---
 name: mspec
-description: Spec-driven design workflow keeping plans and requirements in a `specs/` directory. Never activates automatically — only engages after explicit `/mspec` invocation. Also handles handovers: when the user requests one, update `plan.md` with current status and commit it.
+description: "Spec-driven design workflow keeping plans and requirements in a `specs/` directory. Never activates automatically — only engages after explicit `/mspec` invocation. Also handles handovers: when the user requests one, update `plan.md` with current status and commit it."
 ---
 
 # mspec
