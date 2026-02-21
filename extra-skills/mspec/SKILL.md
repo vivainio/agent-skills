@@ -5,12 +5,6 @@ description: Spec-driven design workflow keeping plans and requirements in a `sp
 
 # mspec
 
-Lightweight spec-first workflow. Before implementing non-trivial changes, write or find a spec in `specs/`. After shipping, update the spec to reflect what actually happened.
-
-## When to Write a Spec
-
-Never create a spec unless invoked with `/mspec`.
-
 ## Workflow
 
 ### Starting a feature
@@ -23,13 +17,10 @@ Never create a spec unless invoked with `/mspec`.
 
 ### Planning (plan mode)
 
-When working in plan mode, write the implementation plan to `specs/<area>/<feature>/plan.md` rather than only outputting it to chat. This makes the plan shareable, reviewable, and committable before any code is written.
-
-`plan.md` is a temporary artifact — it exists to communicate and coordinate, not to persist forever.
+Write the implementation plan to `specs/<area>/<feature>/plan.md` rather than only outputting it to chat.
 
 ### During implementation
 
-- Refer back to `spec.md` and `plan.md` when making decisions
 - Add to **Decisions** in `spec.md` as choices are made
 - Move unresolved items to **Open questions**
 
@@ -56,20 +47,11 @@ Then commit `plan.md` so the state is captured in git.
 Specs always use a 2-level hierarchy: `specs/<area>/<feature>/`
 
 - **area** — a coherent part of the application (e.g. `auth`, `billing`, `api`, `cli`, `infra`); use `main` if no subareas have been established yet
-- **feature** — a specific capability within that area (e.g. `oauth`, `checkout`, `rate-limiting`)
+- **feature** — a specific capability within that area
 - `spec.md` — requirements, context, decisions (long-lived)
 - `plan.md` — implementation plan written during plan mode (temporary; delete after folding into spec)
 - Naming: kebab-case at both levels
-- One spec directory per feature; a spec can cover multiple related tickets
-- Additional files (diagrams, mockups, research notes) can live alongside `spec.md` in the same directory
-
-**Examples:**
-```
-specs/auth/oauth/spec.md
-specs/billing/checkout/spec.md
-specs/api/rate-limiting/spec.md
-specs/cli/csv-export/spec.md
-```
+- Additional files (diagrams, mockups, research notes) can live alongside `spec.md`
 
 ## Resources
 
