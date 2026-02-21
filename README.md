@@ -27,7 +27,7 @@ python install.py --extra
 
 Extra skills (`extra-skills/`) are more opinionated than the core skills. They encode specific workflows and conventions that may conflict with habits or other skills you already have installed. Install them only if you want to adopt the workflow they prescribe.
 
-- **minimal-specs** - Spec-driven design workflow that writes plans and requirements to a `specs/` directory. Opinionated about file layout and when Claude should write specs vs. just code.
+- **mspec** - Spec-driven design workflow that writes plans and requirements to a `specs/` directory. Opinionated about file layout and when Claude should write specs vs. just code.
 
 ## Creating Skills
 

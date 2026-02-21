@@ -1,9 +1,9 @@
 ---
-name: minimal-specs
+name: mspec
 description: Spec-driven design workflow that keeps plans and requirements in a `specs/` directory at the project root. Use this skill when starting a new feature, designing an API or CLI command, making a schema change, or any change that touches more than 2 files. Also handles handovers — when the user says they are taking a break, handing off, or requests a handover, update plan.md with current status and commit it.
 ---
 
-# Minimal Specs
+# mspec
 
 Lightweight spec-first workflow. Before implementing non-trivial changes, write or find a spec in `specs/`. After shipping, update the spec to reflect what actually happened.
 
