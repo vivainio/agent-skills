@@ -46,6 +46,17 @@ Then commit `plan.md` so the state is captured in git.
 
 The `specs/` directory at the project root is probably a symlink to a location in another repository (e.g. a shared docs or planning repo), and should be listed in `.gitignore`. Follow the symlink and commit spec changes in the target repository, not the project repo.
 
+### Initializing specs/ in a project
+
+When `/mspec` is invoked in a project that has no `specs/` yet:
+
+1. Ask the user for the target path (the directory in another repo where specs should live)
+2. Create the target directory if it doesn't exist
+3. Create the symlink: `ln -s <target-path> specs`
+4. Add `specs` to `.gitignore`
+
+Never create a plain `specs/` directory.
+
 ## Spec File Conventions
 
 Specs always use a 2-level hierarchy: `specs/<area>/<feature>/`
