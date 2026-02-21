@@ -1,6 +1,6 @@
 ---
 name: minimal-specs
-description: Spec-driven design workflow that keeps plans and requirements in a `specs/` directory at the project root. Use this skill when starting a new feature, designing an API or CLI command, making a schema change, or any change that touches more than 2 files. Ensures a lightweight spec exists before implementation begins, and provides guidance on when to skip specs (bug fixes, typos, config tweaks).
+description: Spec-driven design workflow that keeps plans and requirements in a `specs/` directory at the project root. Use this skill when starting a new feature, designing an API or CLI command, making a schema change, or any change that touches more than 2 files. Also handles handovers — when the user says they are taking a break, handing off, or requests a handover, update plan.md with current status and commit it.
 ---
 
 # Minimal Specs
@@ -27,8 +27,8 @@ Lightweight spec-first workflow. Before implementing non-trivial changes, write 
 1. Check if a spec already exists: `ls specs/` and scan for relevant area/feature directories
 2. If no spec exists, identify the area and create `specs/<area>/<feature>/spec.md` using the template in `references/spec-template.md`
 3. If no clear area exists yet, use `specs/main/<feature>/` as the default — refactor into named areas later as the project grows
-3. Fill in **What** and **Why** at minimum — keep it to one screen
-4. Show the spec to the user and get a nod before writing code
+4. Fill in **What** and **Why** at minimum — keep it to one screen
+5. Show the spec to the user and get a nod before writing code
 
 ### Planning (plan mode)
 
@@ -41,6 +41,17 @@ When working in plan mode, write the implementation plan to `specs/<area>/<featu
 - Refer back to `spec.md` and `plan.md` when making decisions
 - Add to **Decisions** in `spec.md` as choices are made
 - Move unresolved items to **Open questions**
+
+### Handover
+
+When the user requests a handover (taking a break, switching context, handing off to someone else), update `plan.md` in place with the current status:
+
+- Mark completed steps (e.g. with `[x]` or ~~strikethrough~~)
+- Annotate the current stopping point clearly
+- Note any loose context, gotchas, or decisions made during the session that aren't yet in `spec.md`
+- List what to do next
+
+Then commit `plan.md` so the state is captured in git.
 
 ### After shipping
 
