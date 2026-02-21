@@ -23,8 +23,8 @@ python install.py --extra
 - **tasks-py** - Create and maintain zero-dependency Python task runner files
 - **python-project** - Set up modern Python projects with uv and pyproject.toml
 - **public-github** - Set up public GitHub repos with SSH authentication and PyPI publishing
-- **zaira** - Access Jira tickets offline using the zaira CLI
-- **zipget** - Download and install tools from GitHub releases, URLs, or S3
+- **zaira** - Access Jira tickets offline using the [zaira](https://github.com/vivainio/zaira) CLI
+- **zipget** - Download and install tools from GitHub releases, URLs, or S3 using [zipget-rs](https://github.com/vivainio/zipget-rs)
 
 ## Extra Skills
 
