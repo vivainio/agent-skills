@@ -53,6 +53,7 @@ zaira edit FOO-1234 --description "New description"
 zaira edit FOO-1234 --field "Priority=High" --field "Epic Link=FOO-100"
 zaira edit FOO-1234 --field "assignee=me"   # Assign to yourself
 zaira edit FOO-1234 --field "assignee=user@example.com"  # Assign by email
+zaira edit FOO-1234 --field "components=Backend"  # Set component (case-insensitive, validated against project)
 zaira edit FOO-1234 --from fields.yaml      # Update from YAML file
 zaira edit FOO-1234 --from -                # Update from stdin YAML
 
@@ -91,11 +92,15 @@ zaira history                               # Last 20 entries
 zaira history -n 50                         # Last 50 entries
 zaira history -k FOO-1234                   # Filter by ticket key
 
+# Cache management
+zaira reset                                 # Clear all cached data (editmeta, schema, field descriptions)
+
 # Instance metadata (cached locally)
 zaira info statuses                         # List statuses
 zaira info fields                           # List custom fields
 zaira info fields --refresh                 # Refresh from Jira API
 zaira info field Priority "Story Points"    # Look up editmeta for fields
+zaira info field components                 # List valid components (per project)
 ```
 
 ## Jira Formatting
