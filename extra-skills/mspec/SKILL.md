@@ -1,6 +1,6 @@
 ---
 name: mspec
-description: Spec-driven design workflow that keeps plans and requirements in a `specs/` directory at the project root. Do not activate automatically — only engage this workflow after the user has explicitly invoked `/mspec` in the current session. Once active, use this skill when starting a new feature, designing an API or CLI command, making a schema change, or any change that touches more than 2 files. Also handles handovers — when the user says they are taking a break, handing off, or requests a handover, update plan.md with current status and commit it.
+description: Spec-driven design workflow keeping plans and requirements in a `specs/` directory. Never activates automatically — only engages after explicit `/mspec` invocation. Also handles handovers: when the user requests one, update `plan.md` with current status and commit it.
 ---
 
 # mspec
