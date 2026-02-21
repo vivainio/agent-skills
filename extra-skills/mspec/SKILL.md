@@ -15,10 +15,6 @@ description: "Spec-driven design workflow keeping plans and requirements in a `s
 4. Fill in **What** and **Why** at minimum — keep it to one screen
 5. Show the spec to the user and get a nod before writing code
 
-### Planning (plan mode)
-
-Write the implementation plan to `specs/<area>/<feature>/plan.md` rather than only outputting it to chat.
-
 ### During implementation
 
 - Add to **Decisions** in `spec.md` as choices are made
@@ -57,11 +53,10 @@ Specs always use a 2-level hierarchy: `specs/<area>/<feature>/`
 - **area** — a coherent part of the application (e.g. `auth`, `billing`, `api`, `cli`, `infra`); use `main` if no subareas have been established yet
 - **feature** — a specific capability within that area
 - `spec.md` — requirements, context, decisions (long-lived)
-- `plan.md` — implementation plan written during plan mode (temporary; delete after folding into spec)
+- `plan.md` — created on handover to capture current status (temporary; delete after folding into spec)
 - Naming: kebab-case at both levels
 - Additional files (diagrams, mockups, research notes) can live alongside `spec.md`
 
 ## Resources
 
 - **`references/spec-template.md`** — minimal spec template to copy when creating a new spec
-- **`references/plan-template.md`** — plan template to use when writing `plan.md` during plan mode

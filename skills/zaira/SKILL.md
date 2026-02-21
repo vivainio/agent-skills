@@ -86,6 +86,11 @@ zaira transition FOO-1234 Done -F "Resolution=Done"  # Set fields during transit
 zaira transition FOO-1234 Done -c "Comment text"  # Include comment with transition
 zaira transition FOO-1234 Done -F "Resolution=Done" -c "Comment"  # Fields + comment
 
+# Activity history (local log of write operations)
+zaira history                               # Last 20 entries
+zaira history -n 50                         # Last 50 entries
+zaira history -k FOO-1234                   # Filter by ticket key
+
 # Instance metadata (cached locally)
 zaira info statuses                         # List statuses
 zaira info fields                           # List custom fields
@@ -142,7 +147,7 @@ ps["labels"]      # ['bug', 'feature', ...]
 
 - `tickets/` - Exported ticket markdown files
 - `reports/` - Generated reports
-- `~/.cache/zaira/` - Cached schema (fields, statuses, etc.)
+- `~/.cache/zaira/` - Cached schema (fields, statuses, etc.) and `activity.log`
 
 ## Setup
 
