@@ -9,7 +9,7 @@ Lightweight spec-first workflow. Before implementing non-trivial changes, write 
 
 ## When to Write a Spec
 
-Write a spec when the user explicitly asks for one, or when they invoke `/mspec` to start a feature. Do not create specs proactively or based on the nature of the change alone.
+Never create a spec unless invoked with `/mspec`.
 
 ## Workflow
 
