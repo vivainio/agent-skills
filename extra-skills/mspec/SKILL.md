@@ -48,7 +48,7 @@ The `specs/` directory at the project root is probably a symlink to a location i
 
 ### Initializing specs/ in a project
 
-If `specs/` doesn't exist, ask the user for the target path, then create the symlink with `python3 -c "import os; os.symlink('<target>', 'specs')"` and add `specs` to `.gitignore`. Never create a plain directory.
+If `specs/` doesn't exist, ask the user for the target path, then create the symlink with `python -c "import os; os.symlink('<target>', 'specs')"` and add `specs` to `.gitignore`. Never create a plain directory.
 
 ## Spec File Conventions
 
