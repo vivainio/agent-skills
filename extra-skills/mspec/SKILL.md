@@ -42,6 +42,10 @@ Then commit `plan.md` so the state is captured in git.
 - Remove or strike through anything in `spec.md` that was dropped
 - Leave **Open questions** empty or delete the section
 
+## specs/ directory
+
+The `specs/` directory at the project root may be a symlink to a location in another repository (e.g. a shared docs or planning repo). This is fine — follow the symlink and commit spec changes in the target repository, not the project repo.
+
 ## Spec File Conventions
 
 Specs always use a 2-level hierarchy: `specs/<area>/<feature>/`
