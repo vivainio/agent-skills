@@ -48,13 +48,7 @@ The `specs/` directory at the project root is probably a symlink to a location i
 
 ### Initializing specs/ in a project
 
-When `/mspec` is invoked in a project that has no `specs/` yet:
-
-1. Ask the user for the target path (the directory in another repo where specs should live)
-2. Create the symlink: `ln -s <target-path> specs`
-3. Add `specs` to `.gitignore`
-
-Never create a plain `specs/` directory.
+If `specs/` doesn't exist, ask the user for the target path, then `ln -s <target> specs` and add `specs` to `.gitignore`. Never create a plain directory.
 
 ## Spec File Conventions
 
