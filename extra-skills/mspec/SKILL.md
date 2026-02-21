@@ -22,8 +22,9 @@ description: "Spec-driven design workflow keeping plans and requirements in a `s
 
 ### Handover
 
-When the user requests a handover (taking a break, switching context, handing off to someone else), update `plan.md` in place with the current status:
+When the user requests a handover (taking a break, switching context, handing off to someone else), write `plan.md` with the current status:
 
+- Copy the current native plan (or remaining steps from it)
 - Mark completed steps (e.g. with `[x]` or ~~strikethrough~~)
 - Annotate the current stopping point clearly
 - Note any loose context, gotchas, or decisions made during the session that aren't yet in `spec.md`
