@@ -9,16 +9,7 @@ Lightweight spec-first workflow. Before implementing non-trivial changes, write 
 
 ## When to Write a Spec
 
-**Always write a spec:**
-- New feature, command, endpoint, or module
-- Schema or data model change
-- Change touching more than 2 files
-- Any decision with non-obvious tradeoffs
-
-**Skip the spec:**
-- Bug fixes and typos
-- Config or dependency updates
-- Trivial refactors (rename, move, reformat)
+Write a spec when the user explicitly asks for one, or when they invoke `/mspec` to start a feature. Do not create specs proactively or based on the nature of the change alone.
 
 ## Workflow
 
