@@ -50,6 +50,14 @@ Specs always use a 2-level hierarchy: `specs/<area>/<feature>/`
 - Naming: kebab-case at both levels
 - Optional companion files can live alongside `spec.md`: `research.md` (background, prior art, analysis), `testing.md` (test strategy, edge cases), diagrams, mockups, etc.
 
+## Finding WIP
+
+```
+grep -rL "## Shipped" specs/ --include="spec.md"
+```
+
+Lists all specs not yet shipped.
+
 ## Resources
 
 - **`references/spec-template.md`** — minimal spec template to copy when creating a new spec
