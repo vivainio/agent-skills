@@ -32,6 +32,7 @@ Extra skills (`extra-skills/`) are more opinionated than the core skills. They e
 - **zipget** - Download and install tools from GitHub releases, URLs, or S3 using [zipget-rs](https://github.com/vivainio/zipget-rs)
 - **mspec** - Spec-driven design workflow that writes plans and requirements to a `specs/` directory. Opinionated about file layout and when Claude should write specs vs. just code. The premise is that heavier SDD systems were designed for dumber AI models — this one tries to prove you don't need that much scaffolding anymore. Key conventions:
   - `specs/` is always a symlink into another repository (not the project repo)
+  - Two-level hierarchy: `specs/<area>/<feature>/` — use `main` as area if none established yet
   - Each feature gets a `spec.md` using a minimal template (What, Why, Decisions, Shipped)
   - `## Shipped` is added on completion with commit/PR reference and date
   - WIP features: `grep -rL "## Shipped" specs/ --include="spec.md"`
