@@ -27,6 +27,7 @@ When the user requests a handover, write `plan.md` capturing current status: wha
 ### After shipping
 
 - Fold key decisions and outcomes from `plan.md` into the **Decisions** section of `spec.md`
+- Fill in the **Shipped** section with the commit or PR reference and date
 - Delete `plan.md` once folded in (or keep it as an archive if preferred)
 - Remove or strike through anything in `spec.md` that was dropped
 - Leave **Open questions** empty or delete the section

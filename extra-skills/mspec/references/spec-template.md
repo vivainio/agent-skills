@@ -19,6 +19,9 @@ Relevant work tickets (e.g. PROJ-123). Remove section if not applicable.
 
 ## Open questions
 Anything unresolved. Remove section if empty.
+
+## Shipped
+Commit or PR where this landed, and date. Remove section until shipped.
 ```
 
 ## Notes
