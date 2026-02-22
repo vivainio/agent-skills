@@ -34,7 +34,7 @@ When the user requests a handover, write `plan.md` capturing current status: wha
 
 ## specs/ directory
 
-The `specs/` directory at the project root is probably a symlink to a location in another repository (e.g. a shared docs or planning repo), and should be listed in `.gitignore`. Follow the symlink and commit spec changes in the target repository, not the project repo.
+`specs/` is always a symlink into another repository (e.g. a subdirectory of a shared docs or planning repo — not necessarily its root). It must be listed in `.gitignore`. Always follow the symlink and commit spec changes in the target repository, not the project repo.
 
 ### Initializing specs/ in a project
 
