@@ -19,6 +19,7 @@ zaira search --jql "project = FOO AND created >= -7d"  # Raw JQL
 zaira search "keyword" -n 20                # Limit results
 
 # Get tickets (stdout by default, -o to save files)
+zaira get FOO-1234 --min                    # Peek: key + summary + description only (preferred for quick reads)
 zaira get FOO-1234                          # View ticket to stdout
 zaira get FOO-1234 FOO-5678                 # View multiple tickets
 zaira get FOO-1234 --format json            # JSON output
