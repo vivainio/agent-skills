@@ -7,6 +7,8 @@ description: Access Jira tickets offline using zaira CLI. Use when user needs to
 
 Exports Jira tickets to local markdown for offline access. See https://github.com/vivainio/zaira for setup.
 
+**Start here:** `zaira get FOO-1234` is usually the first command to run — it fetches and displays a ticket. Use `--min` for a quick peek (key + summary + description only).
+
 ## Commands
 
 ```bash
