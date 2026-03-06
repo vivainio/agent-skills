@@ -110,6 +110,8 @@ zaira bundle update                         # Re-fetch from recorded source
 zaira bundle update --dry-run               # Preview what would change
 
 # Cache management
+# If zaira behaves unexpectedly or gets out of sync, 'zaira reset' is safe to run at any time.
+# It clears the local cache and zaira will re-fetch fresh data from Jira on next use.
 zaira reset                                 # Clear all cached data (editmeta, schema, field descriptions)
 zaira reset --rules                         # Disable rules bundle (renames rules/ to rules-disabled/)
 
