@@ -19,11 +19,13 @@ zaira wiki get 123 --list                   # List page tree without exporting
 # Search pages
 zaira wiki search "search terms"            # Search in title and body
 zaira wiki search "API docs" --space TEAM   # Search in specific space
+zaira wiki search --space my                # Search in your personal space (auto-detected)
 zaira wiki search --creator "John Doe"      # Find pages by creator
 zaira wiki search "design" --format url     # Output just URLs
 
 # Create page from markdown
 zaira wiki create -s SPACE -t "Title" -m -b page.md
+zaira wiki create -s my -t "Title" -m -b page.md  # Create in your personal space
 zaira wiki create -s SPACE -t "Title" -m -b -   # From stdin
 
 # Sync markdown files to Confluence
