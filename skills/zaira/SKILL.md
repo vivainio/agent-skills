@@ -59,6 +59,8 @@ zaira edit FOO-1234 --field "assignee=user@example.com"  # Assign by email
 zaira edit FOO-1234 --field "components=Backend"  # Set component (case-insensitive, validated against project)
 zaira edit FOO-1234 --from fields.yaml      # Update from YAML file
 zaira edit FOO-1234 --from -                # Update from stdin YAML
+zaira edit FOO-1234 --field "Priority=High" --dry-run  # Preview without updating
+zaira edit FOO-1234 --field "Priority=High" --no-check  # Skip field whitelist validation
 
 # Log work hours
 zaira log FOO-1234 2h                       # Log 2 hours
@@ -89,14 +91,27 @@ zaira transition FOO-1234 --list            # List available transitions
 zaira transition FOO-1234 Done -F "Resolution=Done"  # Set fields during transition
 zaira transition FOO-1234 Done -c "Comment text"  # Include comment with transition
 zaira transition FOO-1234 Done -F "Resolution=Done" -c "Comment"  # Fields + comment
+zaira transition FOO-1234 Done --dry-run    # Preview without transitioning
+zaira transition FOO-1234 Done --no-check  # Skip rules validation
 
 # Activity history (local log of write operations)
 zaira history                               # Last 20 entries
 zaira history -n 50                         # Last 50 entries
 zaira history -k FOO-1234                   # Filter by ticket key
 
+# Rules validation
+zaira check FOO-1234                        # Check ticket against rules.yaml
+zaira check FOO-1234 FOO-5678              # Check multiple tickets
+
+# Rules bundle management
+zaira bundle install skills/jira-process/rules  # Install from local directory
+zaira bundle install https://example.com/bundle.zip  # Install from URL
+zaira bundle update                         # Re-fetch from recorded source
+zaira bundle update --dry-run               # Preview what would change
+
 # Cache management
 zaira reset                                 # Clear all cached data (editmeta, schema, field descriptions)
+zaira reset --rules                         # Disable rules bundle (renames rules/ to rules-disabled/)
 
 # Instance metadata (cached locally)
 zaira info statuses                         # List statuses
