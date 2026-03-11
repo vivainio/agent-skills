@@ -22,6 +22,7 @@ import sys
 import uuid
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import unquote
 
 TOKEN_FILE = Path.home() / ".claude" / "skills" / "chat-transcript" / ".last-token"
 
@@ -43,6 +44,13 @@ def copilot_base() -> Path:
     if is_windows():
         return Path.home() / ".copilot" / "session-state"
     return Path.home() / ".copilot" / "session-state"
+
+
+def vscode_storage_base() -> Path:
+    if is_windows():
+        appdata = os.environ.get("APPDATA", "")
+        return Path(appdata) / "Code" / "User" / "workspaceStorage"
+    return Path.home() / ".config" / "Code" / "User" / "workspaceStorage"
 
 
 def encode_project_path(project_dir: str) -> str:
@@ -76,11 +84,17 @@ def find_session_by_token(token: str) -> tuple[Path, str] | tuple[None, None]:
         for f in claude_projects.rglob("*.jsonl"):
             candidates.append((f, "Claude Code"))
 
-    # Copilot: search all sessions
+    # Copilot CLI: search all sessions
     copilot_sessions = copilot_base()
     if copilot_sessions.exists():
         for f in copilot_sessions.rglob("events.jsonl"):
-            candidates.append((f, "Copilot CLI / VS Code Copilot Chat"))
+            candidates.append((f, "Copilot CLI"))
+
+    # VS Code Copilot Chat: search all workspace chat sessions
+    vscode_base = vscode_storage_base()
+    if vscode_base.exists():
+        for f in vscode_base.rglob("chatSessions/*.jsonl"):
+            candidates.append((f, "VS Code Copilot Chat"))
 
     for path, tool in candidates:
         try:
@@ -155,7 +169,115 @@ def load_claude_messages(session_file: Path) -> list[dict]:
     return messages
 
 
-# ── Copilot CLI / VS Code Copilot Chat ───────────────────────────────────────
+# ── VS Code Copilot Chat (workspace storage) ────────────────────────────────
+
+def _decode_vscode_folder_uri(uri: str) -> str:
+    """Convert a VS Code folder URI like file:///c%3A/r/t/foo to a local path."""
+    path = uri
+    for prefix in ("file:///", "file://"):
+        if path.startswith(prefix):
+            path = path[len(prefix):]
+            break
+    path = unquote(path)
+    # On Windows the URI starts without a drive letter slash: c:/r/t/foo
+    # On Linux it starts with /: /home/user/foo
+    if is_windows() and not path.startswith("/"):
+        pass  # already clean
+    elif not is_windows() and not path.startswith("/"):
+        path = "/" + path
+    return path
+
+
+def find_vscode_workspace_storage(project_dir: str) -> Path | None:
+    """Return the VS Code workspaceStorage subfolder whose workspace.json matches project_dir."""
+    base = vscode_storage_base()
+    if not base.exists():
+        return None
+    proj = Path(project_dir).resolve()
+    for storage_dir in base.iterdir():
+        if not storage_dir.is_dir():
+            continue
+        workspace_file = storage_dir / "workspace.json"
+        if not workspace_file.exists():
+            continue
+        try:
+            data = json.loads(workspace_file.read_text(encoding="utf-8"))
+            folder_uri = data.get("folder", "")
+            if not folder_uri:
+                continue
+            folder_path = Path(_decode_vscode_folder_uri(folder_uri)).resolve()
+            if folder_path == proj:
+                return storage_dir
+        except Exception:
+            continue
+    return None
+
+
+def find_vscode_session(project_dir: str) -> Path | None:
+    """Find the most recently modified VS Code Copilot Chat session for project_dir."""
+    storage_dir = find_vscode_workspace_storage(project_dir)
+    if not storage_dir:
+        return None
+    chat_dir = storage_dir / "chatSessions"
+    if not chat_dir.exists():
+        return None
+    files = list(chat_dir.glob("*.jsonl"))
+    return max(files, key=lambda p: p.stat().st_mtime) if files else None
+
+
+def load_vscode_messages(session_file: Path) -> list[dict]:
+    """Parse VS Code Copilot Chat session JSONL (kind:0 initial state + kind:2 append patches)."""
+    requests_state: dict[int, dict] = {}
+
+    with open(session_file, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            kind = entry.get("kind")
+            if kind == 0:
+                for idx, req in enumerate(entry.get("v", {}).get("requests", [])):
+                    requests_state[idx] = req
+            elif kind == 2:
+                # Append items to a nested array (e.g. requests[N].response)
+                k = entry.get("k", [])
+                v = entry.get("v", [])
+                if len(k) == 3 and k[0] == "requests" and isinstance(k[1], int) and isinstance(v, list):
+                    idx = k[1]
+                    if idx in requests_state:
+                        requests_state[idx][k[2]] = requests_state[idx].get(k[2], []) + v
+
+    messages = []
+    for idx in sorted(requests_state):
+        req = requests_state[idx]
+        ts_ms = req.get("timestamp", 0)
+        ts = datetime.fromtimestamp(ts_ms / 1000).strftime("%Y-%m-%dT%H:%M:%S") if ts_ms else ""
+
+        user_text = req.get("message", {}).get("text", "").strip()
+        if user_text:
+            messages.append({"role": "user", "content": user_text, "timestamp": ts})
+
+        text_parts = []
+        for part in req.get("response", []):
+            if not isinstance(part, dict):
+                continue
+            if part.get("kind") in ("mcpServersStarting", "thinking", "toolInvocationSerialized"):
+                continue
+            value = part.get("value", "")
+            if value and isinstance(value, str):
+                text_parts.append(value)
+        assistant_text = "".join(text_parts).strip()
+        if assistant_text:
+            messages.append({"role": "assistant", "content": assistant_text, "timestamp": ts})
+
+    return messages
+
+
+# ── Copilot CLI ────────────────────────────────────────────────────────────────
 
 def find_copilot_session(project_dir: str) -> Path | None:
     base = copilot_base()
@@ -253,7 +375,7 @@ def list_sessions(project_dir: str):
     else:
         print("  (none)")
 
-    print(f"\n=== Copilot  ({copilot_base()}) ===")
+    print(f"\n=== Copilot CLI  ({copilot_base()}) ===")
     base = copilot_base()
     if base.exists():
         rows = []
@@ -271,6 +393,29 @@ def list_sessions(project_dir: str):
         for mtime, sid, cwd in sorted(rows, reverse=True)[:5]:
             ts = datetime.fromtimestamp(mtime).strftime("%Y-%m-%d %H:%M")
             print(f"  {sid}  ({ts})  cwd={cwd}")
+    else:
+        print("  (none)")
+
+    print(f"\n=== VS Code Copilot Chat  ({vscode_storage_base()}) ===")
+    vscode_base = vscode_storage_base()
+    if vscode_base.exists():
+        rows2 = []
+        for storage_dir in vscode_base.iterdir():
+            chat_dir = storage_dir / "chatSessions"
+            if not chat_dir.exists():
+                continue
+            wf = storage_dir / "workspace.json"
+            workspace_label = "?"
+            try:
+                data = json.loads(wf.read_text(encoding="utf-8"))
+                workspace_label = _decode_vscode_folder_uri(data.get("folder", "?"))
+            except Exception:
+                pass
+            for sf in chat_dir.glob("*.jsonl"):
+                rows2.append((sf.stat().st_mtime, sf.stem, workspace_label))
+        for mtime, sid, workspace_label in sorted(rows2, reverse=True)[:5]:
+            ts = datetime.fromtimestamp(mtime).strftime("%Y-%m-%d %H:%M")
+            print(f"  {sid}  ({ts})  workspace={workspace_label}")
     else:
         print("  (none)")
 
@@ -330,6 +475,9 @@ def main():
             if session_file.name == "events.jsonl":
                 messages = load_copilot_messages(session_file)
                 source = session_file.parent.name
+            elif session_file.parent.name == "chatSessions":
+                messages = load_vscode_messages(session_file)
+                source = session_file.stem
             else:
                 messages = load_claude_messages(session_file)
                 source = session_file.stem
@@ -340,24 +488,39 @@ def main():
             # Try as Claude session ID
             cf = claude_base() / encode_project_path(project_dir) / f"{args.session}.jsonl"
             cp = copilot_base() / args.session / "events.jsonl"
+            # Try as VS Code session ID across all workspaces
+            vp = None
+            vscode_base = vscode_storage_base()
+            if vscode_base.exists():
+                for storage_dir in vscode_base.iterdir():
+                    candidate = storage_dir / "chatSessions" / f"{args.session}.jsonl"
+                    if candidate.exists():
+                        vp = candidate
+                        break
             if cf.exists():
                 p = cf
             elif cp.exists():
                 p = cp
+            elif vp:
+                p = vp
             else:
                 print(f"Session not found: {args.session}", file=sys.stderr)
                 sys.exit(1)
 
         if p.name == "events.jsonl":
             messages = load_copilot_messages(p)
-            tool = "Copilot CLI / VS Code Copilot Chat"
+            tool = "Copilot CLI"
             source = p.parent.name
+        elif p.parent.name == "chatSessions":
+            messages = load_vscode_messages(p)
+            tool = "VS Code Copilot Chat"
+            source = p.stem
         else:
             messages = load_claude_messages(p)
             tool = "Claude Code"
             source = p.stem
     else:
-        # Auto-detect: Claude Code first (scoped to project), then Copilot
+        # Auto-detect: Claude Code first (scoped to project), then Copilot CLI, then VS Code
         cf = find_claude_session(project_dir)
         if cf:
             messages = load_claude_messages(cf)
@@ -367,8 +530,14 @@ def main():
             pf = find_copilot_session(project_dir)
             if pf:
                 messages = load_copilot_messages(pf)
-                tool = "Copilot CLI / VS Code Copilot Chat"
+                tool = "Copilot CLI"
                 source = pf.parent.name
+            else:
+                vf = find_vscode_session(project_dir)
+                if vf:
+                    messages = load_vscode_messages(vf)
+                    tool = "VS Code Copilot Chat"
+                    source = vf.stem
 
     if not messages:
         print(f"No session found for {project_dir}\nUse --list to see available sessions.", file=sys.stderr)
