@@ -8,10 +8,14 @@ SKILLS_DIR = Path(__file__).parent / "skills"
 EXTRA_SKILLS_DIR = Path(__file__).parent / "extra-skills"
 TARGET_DIR = Path.home() / ".claude" / "skills"
 
+TRAINING_SKILLS = {"zaira", "chat-transcript"}
 
-def link_skills(source_dir: Path) -> None:
+
+def link_skills(source_dir: Path, only: set[str] | None = None) -> None:
     for skill in source_dir.iterdir():
         if not skill.is_dir():
+            continue
+        if only and skill.name not in only:
             continue
 
         target = TARGET_DIR / skill.name
@@ -29,14 +33,16 @@ def link_skills(source_dir: Path) -> None:
 def main():
     parser = argparse.ArgumentParser(description="Symlink skills to ~/.claude/skills")
     parser.add_argument("--extra", action="store_true", help="Also install extra skills")
+    parser.add_argument("--training", action="store_true", help="Only install training skills (zaira, chat-transcript)")
     args = parser.parse_args()
 
     TARGET_DIR.mkdir(parents=True, exist_ok=True)
 
-    link_skills(SKILLS_DIR)
+    only = TRAINING_SKILLS if args.training else None
+    link_skills(SKILLS_DIR, only=only)
 
     if args.extra:
-        link_skills(EXTRA_SKILLS_DIR)
+        link_skills(EXTRA_SKILLS_DIR, only=only)
 
 
 if __name__ == "__main__":
