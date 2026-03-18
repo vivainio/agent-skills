@@ -30,6 +30,8 @@ zaira wiki search "API docs" --space TEAM   # Search in specific space
 zaira wiki search --space my                # Search in your personal space (auto-detected)
 zaira wiki search --creator "John Doe"      # Find pages by creator
 zaira wiki search "design" --format url     # Output just URLs
+zaira wiki search --cql 'space = "ENG" AND label = "api"'  # Raw CQL
+zaira wiki search "api" --format toon     # TOON format (requires: pip install toon-format)
 
 # Create page from markdown
 zaira wiki create -s SPACE -t "Title" -m -b page.md

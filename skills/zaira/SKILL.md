@@ -19,6 +19,8 @@ zaira search -p FOO -s "In Progress"        # Filter by project and status
 zaira search -a "john.doe" -p FOO           # Filter by assignee
 zaira search --jql "project = FOO AND created >= -7d"  # Raw JQL
 zaira search "keyword" -n 20                # Limit results
+zaira search "login" --format json          # JSON output
+zaira search "login" --format toon          # TOON format (requires: pip install toon-format)
 
 # Get tickets (stdout by default, -o to save files)
 zaira get FOO-1234 --min                    # Peek: key + summary + description only (preferred for quick reads)
