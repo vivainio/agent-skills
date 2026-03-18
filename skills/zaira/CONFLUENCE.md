@@ -5,6 +5,14 @@ Access Confluence pages using the same Jira credentials (`zaira init`).
 ## Commands
 
 ```bash
+# List space contents
+zaira wiki ls ENG                           # List root pages and folders
+zaira wiki ls ENG -d 2                      # Tree with depth 2
+zaira wiki ls ENG -d -1                     # Full tree (unlimited depth)
+zaira wiki ls ENG -d 0                      # Root level only
+zaira wiki ls "https://acme.atlassian.net/wiki/spaces/ENG/overview"  # From URL
+zaira wiki ls my                            # List your personal space
+
 # Get page (outputs markdown with front matter)
 zaira wiki get 123456                       # Get page by ID
 zaira wiki get "https://acme.atlassian.net/wiki/spaces/DEV/pages/123456/Title"
@@ -36,6 +44,7 @@ zaira wiki put page.md --status             # Check sync status
 zaira wiki put page.md --diff               # Show local vs remote diff
 zaira wiki put page.md --force              # Force push (overwrite conflicts)
 zaira wiki put docs/*.md --create           # Create new pages for unlinked files
+zaira wiki put docs/*.md --create --space ENG  # Create in specific space
 
 # Edit page properties
 zaira wiki edit 123456 --title "New Title"
@@ -54,17 +63,45 @@ zaira wiki attach 123456 *.png --replace    # Replace existing
 
 ## Front Matter
 
-Files link to Confluence pages via YAML front matter. Title and labels sync automatically:
+Files link to Confluence pages via YAML front matter. Title, labels, space, and folder sync automatically:
 
 ```yaml
 ---
 confluence: 123456
 title: My Page Title
+space: ENG
+folder: guides/api
 labels: [docs, api, v2]
 ---
 
 Page content here...
 ```
+
+### Fields
+
+- **confluence** — Page ID (set after first push or pull)
+- **title** — Page title (syncs bidirectionally)
+- **space** — Space key (e.g. `ENG`). Added on get/pull. Used by `--create` to determine target space.
+- **folder** — Slash-separated folder path (e.g. `guides/api`). Added on get/pull when the page lives inside folders. Used by `--create` to resolve or create the parent folder.
+- **labels** — List of page labels (syncs bidirectionally)
+
+### Creating Pages with Folder Placement
+
+When using `zaira wiki put --create`, pages can be placed in specific spaces and folders via front matter instead of `--parent`:
+
+```yaml
+---
+title: New API Docs
+space: ENG
+folder: guides/api
+---
+
+Content here...
+```
+
+- If the folder path doesn't exist, missing folders are created automatically
+- `space:` is required when `folder:` is present (can also use `--space` flag)
+- Title priority: front matter `title:` > first `# Heading` > filename
 
 ## Image Handling
 
