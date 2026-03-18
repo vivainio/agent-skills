@@ -119,8 +119,9 @@ zaira reset --rules                         # Disable rules bundle (renames rule
 zaira info statuses                         # List statuses
 zaira info fields                           # List custom fields
 zaira info fields --refresh                 # Refresh from Jira API
-zaira info field Priority "Story Points"    # Look up editmeta for fields
-zaira info field components                 # List valid components (per project)
+zaira info field Priority "Story Points"    # Look up editmeta for fields (values grouped by project)
+zaira info field components                 # List valid components grouped by project
+zaira info field components -p FOO          # List valid components for a specific project
 ```
 
 ## Jira Formatting

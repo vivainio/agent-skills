@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import sys
 from pathlib import Path
 
 SKILLS_DIR = Path(__file__).parent / "skills"
@@ -26,7 +27,14 @@ def link_skills(source_dir: Path, only: set[str] | None = None) -> None:
                 print(f"Skipping {skill.name}: {target} exists and is not a symlink")
                 continue
 
-        target.symlink_to(skill.resolve())
+        try:
+            target.symlink_to(skill.resolve())
+        except OSError as e:
+            if os.name == "nt":
+                print(f"Failed to create symlink for {skill.name}: {e}")
+                print("On Windows, run this script as Administrator or enable Developer Mode.")
+                sys.exit(1)
+            raise
         print(f"Linked {skill.name} -> {target}")
 
 

@@ -24,6 +24,7 @@ python install.py --extra
 - **python-project** - Set up modern Python projects with uv and pyproject.toml
 - **public-github** - Set up public GitHub repos with SSH authentication and PyPI publishing
 - **zaira** - Access Jira tickets offline using the [zaira](https://github.com/vivainio/zaira) CLI
+- **chat-transcript** - Capture and save the current AI chat session as a markdown transcript file
 
 ## Extra Skills
 
