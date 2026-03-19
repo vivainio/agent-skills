@@ -47,10 +47,13 @@ zaira wiki put page.md --diff               # Show local vs remote diff
 zaira wiki put page.md --force              # Force push (overwrite conflicts)
 zaira wiki put docs/*.md --create           # Create new pages for unlinked files
 zaira wiki put docs/*.md --create --space ENG  # Create in specific space
+zaira wiki put docs/ --space ENG --mirror      # Mirror directory tree to Confluence folders
+zaira wiki put docs/ --space ENG --mirror --parent team-docs  # Nest under prefix
 
 # Edit page properties
 zaira wiki edit 123456 --title "New Title"
-zaira wiki edit 123456 --parent 789         # Move under different parent
+zaira wiki edit 123456 --parent 789         # Move under different parent (by ID)
+zaira wiki edit 123456 --parent guides/api  # Move to folder path
 zaira wiki edit 123456 --labels "a,b,c"     # Set labels
 zaira wiki edit 123456 --space NEWSPACE     # Move to different space
 
@@ -84,8 +87,19 @@ Page content here...
 - **confluence** — Page ID (set after first push or pull)
 - **title** — Page title (syncs bidirectionally)
 - **space** — Space key (e.g. `ENG`). Added on get/pull. Used by `--create` to determine target space.
-- **folder** — Slash-separated folder path (e.g. `guides/api`). Added on get/pull when the page lives inside folders. Used by `--create` to resolve or create the parent folder.
+- **folder** — Slash-separated folder path (e.g. `guides/api`). Added on get/pull when the page lives inside folders. Used by `--create` to place new pages. Changing it and pushing moves the page to the new folder.
 - **labels** — List of page labels (syncs bidirectionally)
+
+### Mirroring Directories
+
+`--mirror` maps a local directory tree to Confluence folders. It recursively finds `.md` files, derives `folder:` from each file's relative path, and writes `space:`/`folder:` into front matter on disk. The normal create/push pipeline then handles everything — missing folders are created, existing pages are moved if their folder changed.
+
+```bash
+zaira wiki put docs/ --space ENG --mirror
+zaira wiki put docs/ --space ENG --mirror --parent team-docs
+```
+
+Given `docs/api/design.md`, mirror sets `folder: api`. With `--parent team-docs`, it becomes `folder: team-docs/api`. Files at the root of the input directory get no `folder:`. Requires `--space` unless every file already has `space:` in front matter. Implies `--create`.
 
 ### Creating Pages with Folder Placement
 
