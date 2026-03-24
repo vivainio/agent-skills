@@ -34,6 +34,7 @@ zaira get --board 123 -o tickets/           # Export from board
 zaira get --sprint 456 -o tickets/          # Export from sprint
 zaira get FOO-1234 --with-prs              # Include linked GitHub PRs
 zaira get FOO-1234 --with-tests            # Include linked Xray tests and executions
+zaira get --jql "..." -o tickets/ --parallel  # Parallel export + attachment download
 
 # Reports (group-by: status, priority, issuetype, assignee, labels, components, parent)
 zaira report --board 123 --group-by status  # Generate report from board
@@ -41,6 +42,8 @@ zaira report my-tickets --full              # Named report + export tickets
 zaira report --dashboard 123                # Report from Jira dashboard
 zaira report --jql "project = FOO" --files  # Force file output
 zaira report --jql "..." -g components      # Group by component
+zaira report --jql "..." --full --parallel  # Parallel ticket export
+zaira report --dashboard 123 --parallel     # Parallel dashboard gadget queries
 zaira refresh sprint-review.md              # Refresh existing report
 
 # View my tickets
@@ -119,7 +122,8 @@ zaira reset --rules                         # Disable rules bundle (renames rule
 
 # Instance metadata (cached locally)
 zaira info statuses                         # List statuses
-zaira info fields                           # List custom fields
+zaira info fields                           # List custom fields (filtered by allowed_fields if configured)
+zaira info fields --all                     # Show all fields (bypass allowed_fields filter)
 zaira info fields --refresh                 # Refresh from Jira API
 zaira info field Priority "Story Points"    # Look up editmeta for fields (values grouped by project)
 zaira info field components                 # List valid components grouped by project
