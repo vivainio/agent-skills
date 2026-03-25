@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -12,7 +13,7 @@ TARGET_DIR = Path.home() / ".claude" / "skills"
 TRAINING_SKILLS = {"zaira", "chat-transcript"}
 
 
-def link_skills(source_dir: Path, only: set[str] | None = None) -> None:
+def link_skills(source_dir: Path, only: set[str] | None = None, copy: bool = False) -> None:
     for skill in source_dir.iterdir():
         if not skill.is_dir():
             continue
@@ -27,15 +28,19 @@ def link_skills(source_dir: Path, only: set[str] | None = None) -> None:
                 print(f"Skipping {skill.name}: {target} exists and is not a symlink")
                 continue
 
-        try:
-            target.symlink_to(skill.resolve())
-        except OSError as e:
-            if os.name == "nt":
-                print(f"Failed to create symlink for {skill.name}: {e}")
-                print("On Windows, run this script as Administrator or enable Developer Mode.")
-                sys.exit(1)
-            raise
-        print(f"Linked {skill.name} -> {target}")
+        if copy:
+            shutil.copytree(skill.resolve(), target)
+            print(f"Copied {skill.name} -> {target}")
+        else:
+            try:
+                target.symlink_to(skill.resolve())
+            except OSError as e:
+                if os.name == "nt":
+                    print(f"Failed to create symlink for {skill.name}: {e}")
+                    print("On Windows, run this script as Administrator or enable Developer Mode.")
+                    sys.exit(1)
+                raise
+            print(f"Linked {skill.name} -> {target}")
 
 
 def main():
@@ -47,10 +52,10 @@ def main():
     TARGET_DIR.mkdir(parents=True, exist_ok=True)
 
     only = TRAINING_SKILLS if args.training else None
-    link_skills(SKILLS_DIR, only=only)
+    link_skills(SKILLS_DIR, only=only, copy=args.training)
 
     if args.extra:
-        link_skills(EXTRA_SKILLS_DIR, only=only)
+        link_skills(EXTRA_SKILLS_DIR, only=only, copy=args.training)
 
 
 if __name__ == "__main__":

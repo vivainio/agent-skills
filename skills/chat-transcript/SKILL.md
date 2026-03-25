@@ -12,7 +12,7 @@ Save the current AI session to a markdown file for trainer/reviewer use.
 **Step 1** — mark this session with a unique token (run this first, in the chat):
 
 ```bash
-python3 ~/.claude/skills/chat-transcript/scripts/capture.py --mark
+python ~/.claude/skills/chat-transcript/scripts/capture.py --mark
 ```
 
 This prints a token like `TRANSCRIPT-TOKEN-a3f8c2d1` and saves it. The token appearing in the chat response pins this exact session.
@@ -20,7 +20,7 @@ This prints a token like `TRANSCRIPT-TOKEN-a3f8c2d1` and saves it. The token app
 **Step 2** — capture the transcript:
 
 ```bash
-python3 ~/.claude/skills/chat-transcript/scripts/capture.py [output.md]
+python ~/.claude/skills/chat-transcript/scripts/capture.py [output.md]
 ```
 
 The script finds the session containing the token and saves it to `transcript.md` (or the specified file).
@@ -29,10 +29,10 @@ Other options:
 
 ```bash
 # List recent sessions
-python3 ~/.claude/skills/chat-transcript/scripts/capture.py --list
+python ~/.claude/skills/chat-transcript/scripts/capture.py --list
 
 # Capture a specific session by ID
-python3 ~/.claude/skills/chat-transcript/scripts/capture.py --session <session-id>
+python ~/.claude/skills/chat-transcript/scripts/capture.py --session <session-id>
 ```
 
 ## How session detection works
