@@ -64,6 +64,7 @@ zaira edit FOO-1234 --field "assignee=user@example.com"  # Assign by email
 zaira edit FOO-1234 --field "components=Backend"  # Set component (case-insensitive, validated against project)
 zaira edit FOO-1234 --from fields.yaml      # Update from YAML file
 zaira edit FOO-1234 --from -                # Update from stdin YAML
+zaira edit FOO-1234 --field "Description=-" # Read field value from stdin
 zaira edit FOO-1234 --field "Priority=High" --dry-run  # Preview without updating
 zaira edit FOO-1234 --field "Priority=High" --no-check  # Skip field whitelist validation
 
