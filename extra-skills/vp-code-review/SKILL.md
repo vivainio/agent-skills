@@ -30,7 +30,23 @@ ppm clone <org/repo>
 
 Then `cd` into the cloned repo before proceeding.
 
-### 2. Ensure correct gh auth
+### 2. Check out the PR branch via worktree
+
+The existing clone is likely on a different branch. Do not switch branches — create a temporary git worktree instead:
+
+```bash
+git fetch origin
+git worktree add /tmp/review-<repo>-<pr> <pr-branch>
+cd /tmp/review-<repo>-<pr>
+```
+
+This avoids disturbing any in-progress work in the main checkout. Clean up the worktree after the review is complete:
+
+```bash
+git worktree remove /tmp/review-<repo>-<pr>
+```
+
+### 3. Ensure correct gh auth
 
 Check the remote URL to determine whether this is a public or work repository, then switch `gh` to the matching account:
 
@@ -39,7 +55,7 @@ Check the remote URL to determine whether this is a public or work repository, t
 git remote -v | head -1 | grep -q '_/' && gh auth switch --user <work_user> || gh auth switch --user <public_user>
 ```
 
-### 3. Cross-check PR against Jira ticket
+### 4. Cross-check PR against Jira ticket
 
 Extract the Jira ticket key from the PR title, branch name, or description (e.g. `FOO-123`). Then use `/zaira` to fetch the ticket:
 
@@ -52,7 +68,7 @@ Compare the PR changes against the ticket's description and acceptance criteria.
 - The ticket has acceptance criteria the PR doesn't address
 - The PR title/description doesn't match the ticket's intent
 
-### 4. Present context to the reviewer
+### 5. Present context to the reviewer
 
 Before running the automated review, present a brief summary to the user:
 
@@ -66,11 +82,11 @@ Ask the user:
 
 Wait for the user's input before proceeding.
 
-### 5. Run code review
+### 6. Run code review
 
 Invoke `/code-review:code-review` with the provided arguments. It runs a multi-agent review pipeline that handles gathering the diff, reviewing files, scoring issues, and commenting on the PR.
 
-### 6. Review findings with the user
+### 7. Review findings with the user
 
 Present the automated review results to the user. For each finding, ask the user to confirm or dismiss. Especially surface:
 
