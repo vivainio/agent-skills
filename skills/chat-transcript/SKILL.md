@@ -37,7 +37,7 @@ python ~/.claude/skills/chat-transcript/scripts/capture.py --session <session-id
 
 ## How session detection works
 
-`--mark` generates a UUID token, writes it to `~/.claude/skills/chat-transcript/.last-token`, and prints it. Since this output is saved in the session file, `capture.py` can then grep all session files for the token to find the exact session — even when multiple sessions exist for the same project.
+`--mark` generates a UUID token, writes it to `$TMPDIR/chat-transcript-last-token` (defaults to `/tmp/`), and prints it. Since this output is saved in the session file, `capture.py` can then grep all session files for the token to find the exact session — even when multiple sessions exist for the same project.
 
 Without `--mark`, falls back to most-recently-modified session for the current cwd.
 

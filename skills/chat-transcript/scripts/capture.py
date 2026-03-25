@@ -24,7 +24,7 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import unquote
 
-TOKEN_FILE = Path.home() / ".claude" / "skills" / "chat-transcript" / ".last-token"
+TOKEN_FILE = Path(os.environ.get("TMPDIR", "/tmp")) / "chat-transcript-last-token"
 
 
 # ── Platform paths ────────────────────────────────────────────────────────────
@@ -68,7 +68,6 @@ def encode_project_path(project_dir: str) -> str:
 def cmd_mark() -> str:
     """Generate a unique token, save it, and print it so it's captured in the session."""
     token = f"TRANSCRIPT-TOKEN-{uuid.uuid4().hex[:8]}"
-    TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True)
     TOKEN_FILE.write_text(token)
     print(token)
     return token
