@@ -33,10 +33,10 @@ zaira wiki search "design" --format url     # Output just URLs
 zaira wiki search --cql 'space = "ENG" AND label = "api"'  # Raw CQL
 zaira wiki search "api" --format toon     # TOON format (requires: pip install toon-format)
 
-# Create page from markdown
-zaira wiki create -s SPACE -t "Title" -m -b page.md
-zaira wiki create -s my -t "Title" -m -b page.md  # Create in your personal space
-zaira wiki create -s SPACE -t "Title" -m -b -   # From stdin
+# Create page from piped markdown (one-shot, no local file tracking)
+echo "## Hello" | zaira wiki create -s SPACE -t "Title"
+cat generated.md | zaira wiki create -s my -t "Title"  # Create in your personal space
+# For markdown files you own and will keep in sync, use put --create instead
 
 # Sync markdown files to Confluence
 zaira wiki put page.md                      # Push (page ID from front matter)
