@@ -19,12 +19,13 @@ import json
 import os
 import platform
 import sys
+import tempfile
 import uuid
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import unquote
 
-TOKEN_FILE = Path(os.environ.get("TMPDIR", "/tmp")) / "chat-transcript-last-token"
+TOKEN_FILE = Path(tempfile.gettempdir()) / "chat-transcript-last-token"
 
 
 # ── Platform paths ────────────────────────────────────────────────────────────
@@ -34,15 +35,10 @@ def is_windows() -> bool:
 
 
 def claude_base() -> Path:
-    if is_windows():
-        appdata = os.environ.get("APPDATA", "")
-        return Path(appdata) / "claude" / "projects"
     return Path.home() / ".claude" / "projects"
 
 
 def copilot_base() -> Path:
-    if is_windows():
-        return Path.home() / ".copilot" / "session-state"
     return Path.home() / ".copilot" / "session-state"
 
 

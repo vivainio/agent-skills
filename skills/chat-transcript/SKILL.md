@@ -37,17 +37,9 @@ python ~/.claude/skills/chat-transcript/scripts/capture.py --session <session-id
 
 ## How session detection works
 
-`--mark` generates a UUID token, writes it to `$TMPDIR/chat-transcript-last-token` (defaults to `/tmp/`), and prints it. Since this output is saved in the session file, `capture.py` can then grep all session files for the token to find the exact session — even when multiple sessions exist for the same project.
+`--mark` prints a unique token that gets recorded in the chat session. `capture.py` then greps known session-storage locations (Claude Code, Copilot CLI, VS Code Copilot Chat) for that token to pick the exact session.
 
-Without `--mark`, falls back to most-recently-modified session for the current cwd.
-
-| Tool | Session storage |
-|------|----------------|
-| Claude Code | `~/.claude/projects/<encoded-cwd>/*.jsonl` |
-| Copilot CLI | `~/.copilot/session-state/<id>/events.jsonl` |
-| VS Code Copilot Chat | Same as Copilot CLI |
-
-On Windows: Claude uses `%APPDATA%/claude/projects/`, Copilot uses `%USERPROFILE%/.copilot/session-state/`.
+Without `--mark`, falls back to the most-recently-modified session for the current cwd.
 
 ## Output format
 
