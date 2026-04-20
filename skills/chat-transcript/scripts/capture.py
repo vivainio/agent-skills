@@ -91,14 +91,20 @@ def find_session_by_token(token: str) -> tuple[Path, str] | tuple[None, None]:
         for f in vscode_base.rglob("chatSessions/*.jsonl"):
             candidates.append((f, "VS Code Copilot Chat"))
 
+    matches: list[tuple[Path, str]] = []
     for path, tool in candidates:
         try:
             if token in path.read_text(encoding="utf-8", errors="ignore"):
-                return path, tool
+                matches.append((path, tool))
         except OSError:
             continue
 
-    return None, None
+    if not matches:
+        return None, None
+    # A session can fork (resume/compact) into multiple jsonl files that all
+    # contain the original token. Prefer the most recently modified one so
+    # re-running in the same session picks up new messages.
+    return max(matches, key=lambda pt: pt[0].stat().st_mtime)
 
 
 # ── Claude Code ───────────────────────────────────────────────────────────────
