@@ -226,9 +226,41 @@ def find_vscode_session(project_dir: str) -> Path | None:
     return max(files, key=lambda p: p.stat().st_mtime) if files else None
 
 
+_VSCODE_SKIP_KINDS = frozenset({
+    "mcpServersStarting",
+    "thinking",
+    "toolInvocationSerialized",
+    "progressTaskSerialized",
+    "progressMessageSerialized",
+    "textEditGroup",
+    "inlineReference",
+    "contentReference",
+    "codeCitation",
+})
+
+
 def load_vscode_messages(session_file: Path) -> list[dict]:
-    """Parse VS Code Copilot Chat session JSONL (kind:0 initial state + kind:2 append patches)."""
+    """Parse VS Code Copilot Chat session JSONL.
+
+    Handles three patch kinds:
+      - kind:0 — full initial state with a requests array.
+      - kind:1 — in-place replacement; either a whole request
+        (k=["requests", N]) or a nested field (k=["requests", N, field, ...]).
+      - kind:2 — appends; either new request entries at the top level
+        (k=["requests"]) or items into a nested array on an existing/new
+        request (k=["requests", N, field]).
+    """
     requests_state: dict[int, dict] = {}
+
+    def _ensure(idx: int) -> dict:
+        req = requests_state.get(idx)
+        if req is None:
+            req = {}
+            requests_state[idx] = req
+        return req
+
+    def _next_idx() -> int:
+        return max(requests_state.keys(), default=-1) + 1
 
     with open(session_file, encoding="utf-8") as f:
         for line in f:
@@ -243,14 +275,40 @@ def load_vscode_messages(session_file: Path) -> list[dict]:
             if kind == 0:
                 for idx, req in enumerate(entry.get("v", {}).get("requests", [])):
                     requests_state[idx] = req
+            elif kind == 1:
+                k = entry.get("k", [])
+                v = entry.get("v")
+                if len(k) >= 2 and k[0] == "requests" and isinstance(k[1], int):
+                    if len(k) == 2:
+                        if isinstance(v, dict):
+                            requests_state[k[1]] = v
+                    else:
+                        req = _ensure(k[1])
+                        # Walk/descend to the parent of the final key, creating dicts as needed.
+                        cur = req
+                        for key in k[2:-1]:
+                            nxt = cur.get(key)
+                            if not isinstance(nxt, dict):
+                                nxt = {}
+                                cur[key] = nxt
+                            cur = nxt
+                        cur[k[-1]] = v
             elif kind == 2:
-                # Append items to a nested array (e.g. requests[N].response)
                 k = entry.get("k", [])
                 v = entry.get("v", [])
-                if len(k) == 3 and k[0] == "requests" and isinstance(k[1], int) and isinstance(v, list):
-                    idx = k[1]
-                    if idx in requests_state:
-                        requests_state[idx][k[2]] = requests_state[idx].get(k[2], []) + v
+                if not isinstance(v, list):
+                    continue
+                if len(k) == 1 and k[0] == "requests":
+                    # Append new request entries at the top level.
+                    base = _next_idx()
+                    for i, req in enumerate(v):
+                        requests_state[base + i] = req
+                elif len(k) == 3 and k[0] == "requests" and isinstance(k[1], int):
+                    req = _ensure(k[1])
+                    existing = req.get(k[2])
+                    if not isinstance(existing, list):
+                        existing = []
+                    req[k[2]] = existing + v
 
     messages = []
     for idx in sorted(requests_state):
@@ -258,7 +316,12 @@ def load_vscode_messages(session_file: Path) -> list[dict]:
         ts_ms = req.get("timestamp", 0)
         ts = datetime.fromtimestamp(ts_ms / 1000).strftime("%Y-%m-%dT%H:%M:%S") if ts_ms else ""
 
-        user_text = req.get("message", {}).get("text", "").strip()
+        msg_obj = req.get("message", {}) or {}
+        user_text = msg_obj.get("text", "").strip()
+        if not user_text:
+            user_text = " ".join(
+                p.get("text", "") for p in msg_obj.get("parts", []) if isinstance(p, dict)
+            ).strip()
         if user_text:
             messages.append({"role": "user", "content": user_text, "timestamp": ts})
 
@@ -266,7 +329,7 @@ def load_vscode_messages(session_file: Path) -> list[dict]:
         for part in req.get("response", []):
             if not isinstance(part, dict):
                 continue
-            if part.get("kind") in ("mcpServersStarting", "thinking", "toolInvocationSerialized"):
+            if part.get("kind") in _VSCODE_SKIP_KINDS:
                 continue
             value = part.get("value", "")
             if value and isinstance(value, str):
@@ -520,8 +583,8 @@ def main():
             messages = load_claude_messages(p)
             tool = "Claude Code"
             source = p.stem
-    else:
-        # Auto-detect: Claude Code first (scoped to project), then Copilot CLI, then VS Code
+    elif not messages:
+        # Auto-detect only when neither token nor explicit --session produced messages.
         cf = find_claude_session(project_dir)
         if cf:
             messages = load_claude_messages(cf)
