@@ -23,7 +23,7 @@ This prints a token like `TRANSCRIPT-TOKEN-a3f8c2d1` and saves it. The token app
 python ~/.claude/skills/chat-transcript/scripts/capture.py [output.md]
 ```
 
-The script finds the session containing the token and saves it to `transcript.md` (or the specified file).
+The script finds the session containing the token and saves it to `transcript.md` (or the specified file), creating the file if it doesn't already exist.
 
 Other options:
 
