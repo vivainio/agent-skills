@@ -18,7 +18,20 @@ Check the remote URL to determine whether this is a public or work repository, t
 git remote -v | head -1 | grep -q '_/' && gh auth switch --user <work_user> || gh auth switch --user <public_user>
 ```
 
-### 2. Determine the release version
+### 2. Verify local commits are pushed (CRITICAL)
+
+`gh release create` cuts the tag from GitHub, not your local copy. Unpushed commits → release built from stale code. Push and confirm sync first:
+
+```bash
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+git push origin "$BRANCH" && git fetch origin "$BRANCH"
+test "$(git rev-parse HEAD)" = "$(git rev-parse origin/$BRANCH)" \
+  && echo "in sync ✓" || echo "OUT OF SYNC — do not release"
+```
+
+Proceed only on `in sync ✓`. If push fails, stop and fix it — don't release against a stale remote.
+
+### 3. Determine the release version
 
 Fetch existing tags to understand the current versioning:
 
@@ -29,7 +42,7 @@ git tag --sort=-v:refname | head -5
 
 Determine the next version by bumping the appropriate segment (major/minor/patch) based on the changes. Ask the user to confirm if ambiguous.
 
-### 3. Generate release notes
+### 4. Generate release notes
 
 Build release notes from the commit history since the last release:
 
@@ -50,7 +63,7 @@ Structure the notes into sections as appropriate:
 
 Omit empty sections. Keep entries concise — one line per change.
 
-### 4. Create the release
+### 5. Create the release
 
 ```bash
 gh release create <version> \
@@ -63,6 +76,8 @@ EOF
 
 ### Rules
 
+- **Push and verify sync first (step 2).** Never release until local HEAD == remote target branch — the #1 cause of shipping wrong code.
+- **A release that fires a publish workflow is irreversible.** Once the publish-to-PyPI/npm run succeeds, that version is consumed — deleting/recreating the release or moving the tag won't help (the registry rejects re-uploads). If the code was wrong, **bump to the next patch and cut fresh.**
 - **Do NOT create or push git tags.** The `gh release create` command creates the tag on GitHub automatically. Do not run `git tag` beforehand.
 - **Do NOT edit project files** (e.g. version numbers in `pyproject.toml`, `package.json`, `Cargo.toml`). The GitHub Action handles version patching.
 - **Do NOT use `--generate-notes`** as the sole source — always write curated notes from the commit log.
