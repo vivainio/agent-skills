@@ -31,7 +31,27 @@ test "$(git rev-parse HEAD)" = "$(git rev-parse origin/$BRANCH)" \
 
 Proceed only on `in sync ✓`. If push fails, stop and fix it — don't release against a stale remote.
 
-### 3. Determine the release version
+### 3. Verify CI is green on the target branch (CRITICAL)
+
+The release tag is cut from the target branch's current HEAD. If that commit's CI is failing, the release builds (and may publish) broken code — `fmt`/`clippy`/`test` failures gate the build, and a failed publish leaves a dead release behind. Confirm the run for the **exact commit you just pushed** concluded `success` before releasing:
+
+```bash
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+SHA=$(git rev-parse HEAD)
+for i in $(seq 1 30); do
+  read -r RUN_SHA STATUS CONCLUSION <<<"$(gh run list --branch "$BRANCH" --limit 20 \
+    --json headSha,status,conclusion \
+    --jq "[.[] | select(.headSha==\"$SHA\")] | .[0] | \"\(.headSha) \(.status) \(.conclusion)\"")"
+  if [ "$STATUS" = "completed" ]; then break; fi
+  echo "CI status: ${STATUS:-no run yet} (waiting...)"; sleep 20
+done
+test "$CONCLUSION" = "success" \
+  && echo "CI green ✓" || echo "CI NOT GREEN ($CONCLUSION) — do not release"
+```
+
+Proceed only on `CI green ✓`. If CI is red, fix the failure, push, and re-verify before releasing — do not cut a release on top of a broken build. (If no CI run exists for the repo at all, note that and use judgement.)
+
+### 4. Determine the release version
 
 Fetch existing tags to understand the current versioning:
 
@@ -42,7 +62,7 @@ git tag --sort=-v:refname | head -5
 
 Determine the next version by bumping the appropriate segment (major/minor/patch) based on the changes. Ask the user to confirm if ambiguous.
 
-### 4. Generate release notes
+### 5. Generate release notes
 
 Build release notes from the commit history since the last release:
 
@@ -63,7 +83,7 @@ Structure the notes into sections as appropriate:
 
 Omit empty sections. Keep entries concise — one line per change.
 
-### 5. Create the release
+### 6. Create the release
 
 ```bash
 gh release create <version> \
@@ -77,6 +97,7 @@ EOF
 ### Rules
 
 - **Push and verify sync first (step 2).** Never release until local HEAD == remote target branch — the #1 cause of shipping wrong code.
+- **Verify CI is green first (step 3).** Never cut a release on a commit whose CI run is failing or unfinished — the tag builds that exact commit, and a red `fmt`/`clippy`/`test` gate means a failed (or broken-published) release.
 - **A release that fires a publish workflow is irreversible.** Once the publish-to-PyPI/npm run succeeds, that version is consumed — deleting/recreating the release or moving the tag won't help (the registry rejects re-uploads). If the code was wrong, **bump to the next patch and cut fresh.**
 - **Do NOT create or push git tags.** The `gh release create` command creates the tag on GitHub automatically. Do not run `git tag` beforehand.
 - **Do NOT edit project files** (e.g. version numbers in `pyproject.toml`, `package.json`, `Cargo.toml`). The GitHub Action handles version patching.
