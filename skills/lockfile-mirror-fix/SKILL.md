@@ -5,15 +5,32 @@ description: Replace internal registry mirror URLs in package-lock.json/uv.lock 
 
 # lockfile-mirror-fix
 
-Replace the mirror host with the public registry in the lockfile, via
-plain string replace (not sed/regex):
+Detect the mirror host from the lockfile itself (don't ask the user for
+it) and replace it with the public registry, via plain string replace
+after extraction — not a blind regex substitution:
 
-**package-lock.json** — `resolved` URLs → `https://registry.npmjs.org/...`
+**package-lock.json**:
+```python
+import pathlib, re
+p = pathlib.Path("package-lock.json")
+text = p.read_text()
+hosts = set(re.findall(r'"resolved": "https://([^/]+)/', text)) - {"registry.npmjs.org"}
+for host in hosts:
+    text = text.replace(f"https://{host}/", "https://registry.npmjs.org/")
+p.write_text(text)
+```
 
 **uv.lock**:
 ```python
-text = text.replace('registry = "https://<mirror-host>/simple"', 'registry = "https://pypi.org/simple"')
-text = text.replace("https://<mirror-host>/packages/", "https://files.pythonhosted.org/packages/")
+import pathlib, re
+p = pathlib.Path("uv.lock")
+text = p.read_text()
+m = re.search(r'registry = "https://([^/]+)/simple"', text)
+host = m.group(1) if m else None
+if host and host != "pypi.org":
+    text = text.replace(f"https://{host}/simple", "https://pypi.org/simple")
+    text = text.replace(f"https://{host}/packages/", "https://files.pythonhosted.org/packages/")
+p.write_text(text)
 ```
 
 Do this last — a later `uv sync`/`uv lock`/`uv add` will re-clobber it back
