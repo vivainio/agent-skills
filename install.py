@@ -10,7 +10,7 @@ SKILLS_DIR = Path(__file__).parent / "skills"
 EXTRA_SKILLS_DIR = Path(__file__).parent / "extra-skills"
 TARGET_DIR = Path.home() / ".claude" / "skills"
 
-TRAINING_SKILLS = {"zaira", "chat-transcript"}
+TRAINING_SKILLS = {"chat-transcript"}
 
 
 def link_skills(source_dir: Path, only: set[str] | None = None, copy: bool = False) -> None:
@@ -46,7 +46,7 @@ def link_skills(source_dir: Path, only: set[str] | None = None, copy: bool = Fal
 def main():
     parser = argparse.ArgumentParser(description="Symlink skills to ~/.claude/skills")
     parser.add_argument("--extra", action="store_true", help="Also install extra skills")
-    parser.add_argument("--training", action="store_true", help="Only install training skills (zaira, chat-transcript)")
+    parser.add_argument("--training", action="store_true", help="Only install training skills (chat-transcript)")
     args = parser.parse_args()
 
     TARGET_DIR.mkdir(parents=True, exist_ok=True)

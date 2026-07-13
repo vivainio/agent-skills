@@ -23,8 +23,8 @@ python install.py --extra
 - **tasks-py** - Create and maintain zero-dependency Python task runner files
 - **python-project** - Set up modern Python projects with uv and pyproject.toml
 - **public-github** - Set up public GitHub repos with SSH authentication and PyPI publishing
-- **zaira** - Access Jira tickets offline using the [zaira](https://github.com/vivainio/zaira) CLI
 - **chat-transcript** - Capture and save the current AI chat session as a markdown transcript file
+- **lockfile-mirror-fix** - Fix `package-lock.json`/`uv.lock` entries that got resolved against an internal registry mirror instead of the public one, breaking CI that can't reach the mirror
 
 ## Extra Skills
 
