@@ -4,18 +4,11 @@ A collection of shareable Claude Code skills.
 
 ## Installation
 
-```bash
-git clone git@github.com:vivainio/agent-skills.git
-cd agent-skills
-python install.py
-```
-
-This symlinks skills to `~/.claude/skills/`. Edits to the repo update immediately.
-
-To also install extra skills:
+Via [skillset](https://github.com/vivainio/skillset):
 
 ```bash
-python install.py --extra
+uvx skillset add vivainio/agent-skills                    # all skills, prompts to select
+uvx skillset add vivainio/agent-skills -p extra-skills     # extra skills only
 ```
 
 ## Available Skills
