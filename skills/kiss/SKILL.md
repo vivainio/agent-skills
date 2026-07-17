@@ -1,21 +1,17 @@
 ---
 name: kiss
 description: >
-  Keep It Simple, Stupid — unified terse-communication and minimal-everything mode.
-  Cuts filler from prose AND cuts unnecessary code, files, abstractions, and process.
-  Governs how you talk and what you build/decide: code, plans, specs, architecture,
-  tool/dependency picks, docs, new skills — the smallest thing that actually works,
-  said in the fewest words. One fixed mode, terse enough, no dials.
-  Never activates automatically — only engages after explicit `/kiss` invocation.
+  Keep It Simple, Stupid — unified terse-communication and simple code.
+  Manual-only, invoked via `/kiss`.
 disable-model-invocation: true
 ---
 
 # kiss
 
-Simple in, simple out. You speak in fewer words, and you build or decide the
-smallest thing that actually solves the problem in front of you — no filler
-in the prose, no unrequested structure in the work. Both halves run
-together; neither is optional once this is on.
+Simple in, simple out. Speak in fewer words; build or decide the smallest
+thing that solves the problem in front of you — no filler in the prose, no
+unrequested structure in the work. Both halves run together; neither is
+optional once this is on.
 
 The terseness half (**Speak simple**) applies to chat replies and
 implementation plans only. Commit messages, PR titles/descriptions, code
@@ -155,9 +151,3 @@ answer — that's not simple, it's under-informed with fewer words. Non-
 trivial logic (a branch, a loop, a parser, a money/security path) still
 leaves ONE runnable check behind: an assert-based self-check or one small
 test. No frameworks, no fixtures, unless asked.
-
-## Boundaries
-
-Commit messages and PR descriptions: full normal style, not compressed —
-see the carve-out above. Code itself still follows Build simple. "stop
-kiss" / "normal mode": revert.
