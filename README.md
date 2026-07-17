@@ -18,19 +18,15 @@ uvx skillset add vivainio/agent-skills -p extra-skills     # extra skills only
 - **public-github** - Set up public GitHub repos with SSH authentication and PyPI publishing
 - **chat-transcript** - Capture and save the current AI chat session as a markdown transcript file
 - **lockfile-mirror-fix** - Fix `package-lock.json`/`uv.lock` entries that got resolved against an internal registry mirror instead of the public one, breaking CI that can't reach the mirror
+- **kiss** - Keep It Simple, Stupid — terse-communication and minimal-everything mode
+- **github-release** - Create GitHub releases with release notes using the `gh` CLI
 
 ## Extra Skills
 
 Extra skills (`extra-skills/`) are more opinionated than the core skills. They encode specific workflows and conventions that may conflict with habits or other skills you already have installed. Install them only if you want to adopt the workflow they prescribe.
 
 - **zipget** - Download and install tools from GitHub releases, URLs, or S3 using [zipget-rs](https://github.com/vivainio/zipget-rs)
-- **mspec** - Spec-driven design workflow that writes plans and requirements to a `specs/` directory. Opinionated about file layout and when Claude should write specs vs. just code. The premise is that heavier SDD systems were designed for dumber AI models — this one tries to prove you don't need that much scaffolding anymore. Key conventions:
-  - `specs/` is always a symlink into another repository — can point to the root or a subdirectory of it
-  - Two-level hierarchy: `specs/<area>/<feature>/` — use `main` as area if none established yet
-  - Each feature gets a `spec.md` using a minimal template (What, Why, Decisions, Shipped)
-  - `## Shipped` is added on completion with commit/PR reference and date
-  - WIP features: `grep -rL "## Shipped" specs/ --include="spec.md"`
-  - Optional companion files: `research.md`, `testing.md`, diagrams alongside `spec.md`
+- **vp-code-review** - Review a pull request or branch diff
 
 ## Creating Skills
 
