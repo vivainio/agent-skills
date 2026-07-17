@@ -1,39 +1,25 @@
 ---
 name: lockfile-mirror-fix
-description: Replace internal registry mirror URLs in package-lock.json/uv.lock with public npm/pypi URLs. Never activates automatically — only engages after explicit `/lockfile-mirror-fix` invocation.
+description: Replace internal registry mirror URLs in package-lock.json/uv.lock with public npm/pypi URLs. Needed to fix CI failures where the CI runner can't reach internal PyPI/npm mirrors baked into the lockfile. Never activates automatically — only engages after explicit `/lockfile-mirror-fix` invocation.
+disable-model-invocation: true
 ---
 
 # lockfile-mirror-fix
 
-Detect the mirror host from the lockfile itself (don't ask the user for
-it) and replace it with the public registry, via plain string replace
-after extraction — not a blind regex substitution:
+Fixes CI failures caused by lockfiles pointing at an internal registry
+mirror (e.g. a corporate npm/PyPI proxy) that the CI runner can't reach —
+symptoms include `ENOTFOUND`/DNS or connection-refused errors during
+`npm ci`/`uv sync` against a mirror hostname. Rewriting the URLs to the
+public npm/PyPI registries fixes it.
 
-**package-lock.json**:
-```python
-import pathlib, re
-p = pathlib.Path("package-lock.json")
-text = p.read_text()
-hosts = set(re.findall(r'"resolved": "https://([^/]+)/', text)) - {"registry.npmjs.org"}
-for host in hosts:
-    text = text.replace(f"https://{host}/", "https://registry.npmjs.org/")
-p.write_text(text)
-```
+Run the matching script from the directory containing the lockfile. Each
+detects the mirror host from the file itself — nothing to fill in.
 
-**uv.lock**:
-```python
-import pathlib, re
-p = pathlib.Path("uv.lock")
-text = p.read_text()
-m = re.search(r'registry = "https://([^/]+)/simple"', text)
-host = m.group(1) if m else None
-if host and host != "pypi.org":
-    text = text.replace(f"https://{host}/simple", "https://pypi.org/simple")
-    text = text.replace(f"https://{host}/packages/", "https://files.pythonhosted.org/packages/")
-p.write_text(text)
-```
+**package-lock.json**: `python ~/.claude/skills/lockfile-mirror-fix/scripts/fix_npm.py`
 
-Do this last — a later `uv sync`/`uv lock`/`uv add` will re-clobber it back
-to the mirror, so redo it if that happens. Verify with tests/build, not
-`uv lock --locked` (which flags harmless mirror-vs-public metadata diffs
-like missing `size`/`upload-time`).
+**uv.lock**: `python ~/.claude/skills/lockfile-mirror-fix/scripts/fix_uv.py`
+
+Run the uv one last — a later `uv sync`/`uv lock`/`uv add` will re-clobber
+the fix back to the mirror, so redo it if that happens. Verify with
+tests/build, not `uv lock --locked` (which flags harmless mirror-vs-public
+metadata diffs like missing `size`/`upload-time`).
