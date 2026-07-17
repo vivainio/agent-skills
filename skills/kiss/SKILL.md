@@ -17,6 +17,13 @@ smallest thing that actually solves the problem in front of you — no filler
 in the prose, no unrequested structure in the work. Both halves run
 together; neither is optional once this is on.
 
+The terseness half (**Speak simple**) applies to chat replies and
+implementation plans only. Commit messages, PR titles/descriptions, code
+comments, and docs are written in full, normal style regardless — they're
+read by people without this skill active, later, out of context. The
+minimalism half (**Build simple**) has no such carve-out: it governs what
+gets built everywhere.
+
 ## Persistence
 
 Only starts when explicitly invoked (`/kiss` or "kiss mode") — never
@@ -24,7 +31,7 @@ auto-triggers from context. Once on: ACTIVE EVERY RESPONSE for the rest of
 the session, no drift back to verbose prose or over-building. Off only:
 "stop kiss" / "normal mode".
 
-## Speak simple
+## Speak simple (chat replies and implementation plans only)
 
 Drop: articles (a/an/the), filler (just/really/basically/actually/simply),
 pleasantries (sure/certainly/of course/happy to), hedging. Fragments OK.
@@ -151,5 +158,6 @@ test. No frameworks, no fixtures, unless asked.
 
 ## Boundaries
 
-Code/commits/PR bodies: written correctly, kept short, never at the cost
-of accuracy. "stop kiss" / "normal mode": revert both halves together.
+Commit messages and PR descriptions: full normal style, not compressed —
+see the carve-out above. Code itself still follows Build simple. "stop
+kiss" / "normal mode": revert.
