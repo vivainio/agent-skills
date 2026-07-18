@@ -21,7 +21,11 @@ python3 scripts/preflight.py
 The script's output shows each check and any data needed for version and
 release-note analysis. Dirty files are not released unless committed.
 
-Proceed only on `PREFLIGHT PASS`. On failure the script prints which check failed and exits non-zero — fix that (push, wait for CI, etc.) and re-run before releasing. (If no CI run exists for the exact commit and the latest branch runs contain no completed failures, the script notes that and lets you proceed with judgement.)
+Proceed only on `PREFLIGHT PASS`. On an Actions failure the script fetches the
+failed job logs to show why it failed, then prints which check failed and exits
+non-zero — fix that (push, wait for CI, etc.) and re-run before releasing. (If
+no CI run exists for the exact commit and the latest branch runs contain no
+completed failures, the script notes that and lets you proceed with judgement.)
 
 ### 6. Determine the release version
 

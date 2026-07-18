@@ -28,6 +28,31 @@ def fail(msg):
     sys.exit(1)
 
 
+def print_failure_details(failed_runs):
+    """Fetch failed job logs so the preflight explains why Actions failed."""
+    print("\n== GitHub Actions failure details ==")
+    for item in failed_runs:
+        name = item["workflowName"] or "(unnamed)"
+        print(f"\n-- {name} --")
+        if item.get("url"):
+            print(item["url"])
+        result = subprocess.run(
+            ["gh", "run", "view", str(item["databaseId"]), "--log-failed"],
+            capture_output=True,
+            text=True,
+        )
+        output = "\n".join(
+            part.strip() for part in (result.stdout, result.stderr) if part.strip()
+        )
+        if output:
+            print(output)
+        else:
+            print(
+                "Failed job logs were unavailable; open the run URL above "
+                "for details."
+            )
+
+
 branch = run("git", "rev-parse", "--abbrev-ref", "HEAD")
 
 # 1. gh auth -- switch to the account matching this repo (work vs. public),
@@ -80,7 +105,7 @@ runs = []
 for attempt in range(30):
     runs = json.loads(run(
         "gh", "run", "list", "--commit", sha, "--limit", "100",
-        "--json", "workflowName,status,conclusion,headSha,url",
+        "--json", "databaseId,workflowName,status,conclusion,headSha,url",
         check=False,
     ) or "[]")
     if not runs:
@@ -102,7 +127,7 @@ for attempt in range(30):
 if not runs:
     latest = json.loads(run(
         "gh", "run", "list", "--branch", branch, "--limit", "5",
-        "--json", "workflowName,status,conclusion,headSha,url",
+        "--json", "databaseId,workflowName,status,conclusion,headSha,url",
     ) or "[]")
     print(f"CI: no run found for commit; latest {branch} runs: {json.dumps(latest)}")
     failed = [
@@ -111,6 +136,7 @@ if not runs:
     ]
     if failed:
         names = ", ".join(item["workflowName"] or "(unnamed)" for item in failed)
+        print_failure_details(failed)
         fail(f"latest {branch} Actions runs failed: {names}")
     print("CI: exact commit status unavailable — proceed with judgement")
 else:
@@ -124,6 +150,7 @@ else:
             f"{item['workflowName'] or '(unnamed)'}={item['conclusion']}"
             for item in failed
         )
+        print_failure_details(failed)
         fail(f"CI failed on {sha}: {details}")
     names = ", ".join(item["workflowName"] or "(unnamed)" for item in runs)
     print(f"CI: success ✓ ({names})")
