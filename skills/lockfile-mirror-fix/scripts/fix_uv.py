@@ -8,10 +8,12 @@ import re
 
 p = pathlib.Path("uv.lock")
 text = p.read_text()
-m = re.search(r'registry = "https://([^/]+)/simple"', text)
-host = m.group(1) if m else None
-if host and host != "pypi.org":
-    text = text.replace(f"https://{host}/simple", "https://pypi.org/simple")
-    text = text.replace(f"https://{host}/packages/", "https://files.pythonhosted.org/packages/")
+m = re.search(r'registry = "(https://[^"]+)/simple"', text)
+prefix = m.group(1) if m else None
+if prefix and prefix != "https://pypi.org":
+    text = text.replace(f"{prefix}/simple", "https://pypi.org/simple")
+    text = text.replace(f"{prefix}/packages/", "https://files.pythonhosted.org/packages/")
+    # some mirrors (e.g. Artifactory) double the packages/ segment in package URLs
+    text = text.replace("files.pythonhosted.org/packages/packages/", "files.pythonhosted.org/packages/")
     p.write_text(text)
-print(f"replaced host: {host or 'none found'}")
+print(f"replaced prefix: {prefix or 'none found'}")
