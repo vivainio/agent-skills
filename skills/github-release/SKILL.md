@@ -9,47 +9,17 @@ Create GitHub releases with release notes using the `gh` CLI. Do NOT create or p
 
 ## Workflow
 
-### 1. Ensure correct gh auth
+### 1-3. Preflight: gh auth, push/sync, CI green (CRITICAL)
 
-Check the remote URL to determine whether this is a public or work repository, then switch `gh` to the matching account:
-
-```bash
-# If the GitHub username in the remote URL contains "_", it's a work repo; otherwise it's public
-git remote -v | head -1 | grep -q '_/' && gh auth switch --user <work_user> || gh auth switch --user <public_user>
-```
-
-### 2. Verify local commits are pushed (CRITICAL)
-
-`gh release create` cuts the tag from GitHub, not your local copy. Unpushed commits → release built from stale code. Push and confirm sync first:
+Run the bundled script — it switches `gh` auth to the account matching this repo (public vs. work, detected from `gh auth status`'s logged-in accounts), pushes the current branch and verifies local HEAD matches `origin`, then polls CI for the exact pushed commit and requires `success`:
 
 ```bash
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
-git push origin "$BRANCH" && git fetch origin "$BRANCH"
-test "$(git rev-parse HEAD)" = "$(git rev-parse origin/$BRANCH)" \
-  && echo "in sync ✓" || echo "OUT OF SYNC — do not release"
+python3 scripts/preflight.py
 ```
 
-Proceed only on `in sync ✓`. If push fails, stop and fix it — don't release against a stale remote.
+`gh release create` cuts the tag from GitHub, not your local copy — unpushed commits mean a release built from stale code. The release tag is cut from the target branch's current HEAD, so if that commit's CI is failing, the release builds (and may publish) broken code.
 
-### 3. Verify CI is green on the target branch (CRITICAL)
-
-The release tag is cut from the target branch's current HEAD. If that commit's CI is failing, the release builds (and may publish) broken code — `fmt`/`clippy`/`test` failures gate the build, and a failed publish leaves a dead release behind. Confirm the run for the **exact commit you just pushed** concluded `success` before releasing:
-
-```bash
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
-SHA=$(git rev-parse HEAD)
-for i in $(seq 1 30); do
-  read -r RUN_SHA STATUS CONCLUSION <<<"$(gh run list --branch "$BRANCH" --limit 20 \
-    --json headSha,status,conclusion \
-    --jq "[.[] | select(.headSha==\"$SHA\")] | .[0] | \"\(.headSha) \(.status) \(.conclusion)\"")"
-  if [ "$STATUS" = "completed" ]; then break; fi
-  echo "CI status: ${STATUS:-no run yet} (waiting...)"; sleep 20
-done
-test "$CONCLUSION" = "success" \
-  && echo "CI green ✓" || echo "CI NOT GREEN ($CONCLUSION) — do not release"
-```
-
-Proceed only on `CI green ✓`. If CI is red, fix the failure, push, and re-verify before releasing — do not cut a release on top of a broken build. (If no CI run exists for the repo at all, note that and use judgement.)
+Proceed only on `PREFLIGHT PASS`. On failure the script prints which check failed and exits non-zero — fix that (push, wait for CI, etc.) and re-run before releasing. (If no CI run exists for the repo at all, the script notes that and lets you proceed with judgement.)
 
 ### 4. Determine the release version
 
@@ -96,8 +66,7 @@ EOF
 
 ### Rules
 
-- **Push and verify sync first (step 2).** Never release until local HEAD == remote target branch — the #1 cause of shipping wrong code.
-- **Verify CI is green first (step 3).** Never cut a release on a commit whose CI run is failing or unfinished — the tag builds that exact commit, and a red `fmt`/`clippy`/`test` gate means a failed (or broken-published) release.
+- **Run preflight first (step 1-3).** Never release until `PREFLIGHT PASS` — local HEAD must match remote target branch (#1 cause of shipping wrong code) and CI must be green on that exact commit (the tag builds it as-is; a red `fmt`/`clippy`/`test` gate means a failed or broken-published release).
 - **A release that fires a publish workflow is irreversible.** Once the publish-to-PyPI/npm run succeeds, that version is consumed — deleting/recreating the release or moving the tag won't help (the registry rejects re-uploads). If the code was wrong, **bump to the next patch and cut fresh.**
 - **Do NOT create or push git tags.** The `gh release create` command creates the tag on GitHub automatically. Do not run `git tag` beforehand.
 - **Do NOT edit project files** (e.g. version numbers in `pyproject.toml`, `package.json`, `Cargo.toml`). The GitHub Action handles version patching.
