@@ -20,6 +20,7 @@ uvx skillset add vivainio/agent-skills -p extra-skills     # extra skills only
 - **lockfile-mirror-fix** - Fix `package-lock.json`/`uv.lock` entries that got resolved against an internal registry mirror instead of the public one, breaking CI that can't reach the mirror
 - **kiss** - Keep It Simple, Stupid — terse-communication and minimal-everything mode
 - **github-release** - Create GitHub releases with release notes using the `gh` CLI
+- **worktree-done** - Wrap up a finished git worktree (manual-only, `/worktree-done`)
 
 ## Extra Skills
 
