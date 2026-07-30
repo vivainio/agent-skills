@@ -11,11 +11,10 @@ Create GitHub releases with release notes using the `gh` CLI. Do NOT create or p
 
 ### 1-5. Preflight: gh auth, releases, worktree, refs/sync, CI (CRITICAL)
 
-Run the bundled script. It selects the matching `gh` account, synchronizes the
-current branch, and checks CI:
+Run the bundled script relative to this `SKILL.md`, not the repository:
 
 ```bash
-python3 scripts/preflight.py
+python3 <skill-directory>/scripts/preflight.py
 ```
 
 The script's output shows each check and any data needed for version and
