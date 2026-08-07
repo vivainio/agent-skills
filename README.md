@@ -28,6 +28,7 @@ Extra skills (`extra-skills/`) are more opinionated than the core skills. They e
 
 - **zipget** - Download and install tools from GitHub releases, URLs, or S3 using [zipget-rs](https://github.com/vivainio/zipget-rs)
 - **vp-code-review** - Review a pull request or branch diff
+- **leo-editor** - Work on the leo-editor codebase: sync `.leo` outline files with edited source via leoBridge, run its test/lint/type-check suite
 
 ## Creating Skills
 
