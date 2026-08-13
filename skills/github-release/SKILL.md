@@ -18,7 +18,16 @@ python3 <skill-directory>/scripts/preflight.py
 ```
 
 The script's output shows each check and any data needed for version and
-release-note analysis. Dirty files are not released unless committed.
+release-note analysis. Dirty files are not released unless committed. The
+preflight does not push: it fetches remote refs and fails if local `HEAD` does
+not match the remote branch. It suggests the exact `git push origin <branch>`
+command; run that or reconcile the branch explicitly, then rerun preflight.
+It also requires the current branch to match the repository's default branch.
+For an intentional release from another branch, override the target explicitly:
+
+```bash
+python3 <skill-directory>/scripts/preflight.py --target <branch>
+```
 
 Proceed only on `PREFLIGHT PASS`. On an Actions failure the script fetches the
 failed job logs to show why it failed, then prints which check failed and exits
@@ -67,7 +76,8 @@ EOF
 
 ### Rules
 
-- **Run preflight first (steps 1-5).** Never release until `PREFLIGHT PASS` — local HEAD must match remote target branch (#1 cause of shipping wrong code) and CI must be green on that exact commit (the tag builds it as-is; a red `fmt`/`clippy`/`test` gate means a failed or broken-published release).
+- **Run preflight first (steps 1-5).** Never release until `PREFLIGHT PASS` — local HEAD must match remote target branch (#1 cause of shipping wrong code) and CI must be green on that exact commit (the tag builds it as-is; a red `fmt`/`clippy`/`test` gate means a failed or broken-published release). Preflight is read-only with respect to the remote and never pushes commits.
+- **Release from the default branch.** Preflight requires the current branch to match the GitHub default branch unless the caller explicitly supplies `--target <branch>`.
 - **A release that fires a publish workflow is irreversible.** Once the publish-to-PyPI/npm run succeeds, that version is consumed — deleting/recreating the release or moving the tag won't help (the registry rejects re-uploads). If the code was wrong, **bump to the next patch and cut fresh.**
 - **Do NOT create or push git tags.** The `gh release create` command creates the tag on GitHub automatically. Do not run `git tag` beforehand.
 - **Do NOT edit project files** (e.g. version numbers in `pyproject.toml`, `package.json`, `Cargo.toml`). The GitHub Action handles version patching.

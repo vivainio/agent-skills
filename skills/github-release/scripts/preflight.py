@@ -2,6 +2,7 @@
 Exits non-zero and prints the failing check if anything blocks a release.
 """
 
+import argparse
 import json
 import re
 import subprocess
@@ -53,6 +54,14 @@ def print_failure_details(failed_runs):
             )
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--target",
+    metavar="BRANCH",
+    help="release branch to require instead of the repository default branch",
+)
+args = parser.parse_args()
+
 branch = run("git", "rev-parse", "--abbrev-ref", "HEAD")
 
 # 1. gh auth -- switch to the account matching this repo (work vs. public),
@@ -67,6 +76,21 @@ target = next((a for a in accounts if ("_" in a) == is_work_repo), None)
 if target:
     run("gh", "auth", "switch", "--user", target)
 print(f"gh auth: {target or 'no matching account found, using current'}")
+
+# Release from the repository default branch unless the caller explicitly names
+# a different release branch.
+default_branch = run(
+    "gh", "repo", "view", "--json", "defaultBranchRef",
+    "--jq", ".defaultBranchRef.name",
+)
+release_branch = args.target or default_branch
+if branch != release_branch:
+    override = f" or rerun with `--target {branch}`" if not args.target else ""
+    fail(
+        f"current branch is '{branch}', but release target is '{release_branch}'; "
+        f"check out '{release_branch}'{override}"
+    )
+print(f"release target: {release_branch}")
 
 # 2. Capture release history for version and release-note analysis. JSON keeps
 # the output machine-readable while still being compact enough to inspect.
@@ -89,14 +113,19 @@ if dirty:
 else:
     print("worktree: clean")
 
-# 4. Push, refresh all remote refs (including tags), and verify local == remote.
+# 4. Refresh all remote refs (including tags) and verify local == remote.
+# This is intentionally read-only with respect to the remote: preflight reports
+# unpushed commits instead of publishing them implicitly.
 print("\n== Remote synchronization ==")
-run("git", "push", "origin", branch)
 run("git", "fetch", "origin", "--prune", "--tags")
 sha = run("git", "rev-parse", "HEAD")
 remote_sha = run("git", "rev-parse", f"origin/{branch}")
 if sha != remote_sha:
-    fail(f"local HEAD ({sha}) != origin/{branch} ({remote_sha}) — out of sync")
+    fail(
+        f"local HEAD ({sha}) != origin/{branch} ({remote_sha}) — out of sync; "
+        f"push with `git push origin {branch}` or reconcile the branch, then "
+        "rerun preflight"
+    )
 print(f"sync and tags: ok ({sha})")
 
 # 5. Wait for every Actions run on this exact commit, requiring success.
