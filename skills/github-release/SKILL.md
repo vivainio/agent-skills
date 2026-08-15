@@ -43,7 +43,7 @@ Use the tags and release JSON fetched by preflight to understand the current ver
 git tag --sort=-v:refname | head -5
 ```
 
-Determine the next version by bumping the appropriate segment (major/minor/patch) based on the changes. Ask the user to confirm if ambiguous.
+Determine the next version from product changes only. Ask the user to confirm if ambiguous.
 
 ### 7. Generate release notes
 
@@ -53,6 +53,10 @@ Build release notes from the commit history since the last release:
 # Use the latest published release tag from preflight's release JSON
 git log <previous-tag>..HEAD --oneline --no-decorate
 ```
+
+Include only shipped product changes. Exclude README, documentation, website,
+test, CI, tooling, and other internal-only changes. If none remain, stop instead
+of creating a release.
 
 Structure the notes into sections as appropriate:
 
