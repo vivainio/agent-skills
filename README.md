@@ -21,6 +21,7 @@ uvx skillset add vivainio/agent-skills -p extra-skills     # extra skills only
 - **kiss** - Keep It Simple, Stupid — terse-communication and minimal-everything mode
 - **github-release** - Create GitHub releases with release notes using the `gh` CLI
 - **worktree-done** - Wrap up a finished git worktree (manual-only, `/worktree-done`)
+- **zensical-publishing** - Set up and publish a Zensical docs book (GitHub Pages workflow, strict build) and add the bundled reading tools: click-to-zoom Mermaid diagrams, full-screen tables, Nav/TOC/Wide toggles
 
 ## Extra Skills
 

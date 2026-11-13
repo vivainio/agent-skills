@@ -1,0 +1,121 @@
+/* Reading tools for Zensical books; behaviour lives in reading-tools.js.
+   Layout toggles adapted from basware/rosetta-docs. */
+
+/* Toolbar: only where both sidebars exist (>= 1220px). */
+.od-toolbar {
+  display: none;
+}
+@media (min-width: 76.25em) {
+  .od-toolbar {
+    position: fixed;
+    top: 3rem;
+    right: 0.6rem;
+    z-index: 4;
+    display: flex;
+    gap: 0.2rem;
+    padding: 0.15rem;
+    border-radius: 0.2rem;
+    background: var(--md-default-bg-color);
+    border: 0.05rem solid var(--md-default-fg-color--lightest);
+    box-shadow: 0 0.1rem 0.4rem rgba(0, 0, 0, 0.12);
+  }
+}
+.od-toolbar button,
+.od-table-tools button,
+.od-overlay__bar button {
+  font: inherit;
+  font-size: 0.62rem;
+  line-height: 1;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  color: var(--md-default-fg-color--light);
+  background: transparent;
+  border: 0.05rem solid var(--md-default-fg-color--lightest);
+  border-radius: 0.15rem;
+}
+.od-toolbar button:hover,
+.od-table-tools button:hover,
+.od-overlay__bar button:hover,
+.od-toolbar button[aria-pressed="true"] {
+  color: var(--md-accent-fg-color);
+  border-color: var(--md-accent-fg-color);
+}
+
+/* State classes are set on <html> by the script. */
+html.od-hide-nav .md-sidebar--primary,
+html.od-hide-toc .md-sidebar--secondary {
+  display: none;
+}
+html.od-wide .md-grid {
+  max-width: none;
+}
+html.od-overlay-open {
+  overflow: hidden;
+}
+
+/* "Full screen" button above each table. */
+.od-table-tools {
+  text-align: right;
+  margin: 0.4rem 0 0.1rem;
+}
+
+/* Diagrams on the page open full screen on click. */
+.md-typeset div.mermaid[data-od-zoom] {
+  cursor: zoom-in;
+}
+.md-typeset div.mermaid[data-od-zoom]:focus-visible {
+  outline: 0.1rem solid var(--md-accent-fg-color);
+  outline-offset: 0.2rem;
+}
+
+/* Full-screen overlay, shared by tables and diagrams. */
+.od-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  background: var(--md-default-bg-color);
+}
+.od-overlay__bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.65rem;
+  color: var(--md-default-fg-color--light);
+  border-bottom: 0.05rem solid var(--md-default-fg-color--lightest);
+}
+.od-overlay__tools {
+  display: flex;
+  gap: 0.2rem;
+}
+.od-overlay__body {
+  flex: 1;
+  overflow: auto;
+  padding: 0.8rem;
+}
+.od-overlay__body table {
+  display: table !important;
+  max-width: none !important;
+  font-size: 0.68rem;
+}
+.od-overlay__body thead th {
+  position: sticky;
+  top: -0.8rem;
+  z-index: 1;
+  background: var(--md-default-bg-color);
+}
+.od-overlay__body--diagram {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.od-overlay__body--diagram.od-dragging {
+  cursor: grabbing;
+}
+.od-diagram-stage {
+  width: max-content;
+  margin: 0 auto;
+}
